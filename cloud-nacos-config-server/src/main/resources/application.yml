@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/storewang/springCloudConfig.git
+          username: wxy0308beijin@126.com
+          password: 3588601atts
+      label: master
+  application:
+    name: cloud-nacos-config-server
+server:
+  port: 9091
