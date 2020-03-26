@@ -37,7 +37,26 @@ ribbon:
     enabled: true
     # 为哪些服务开启饥饿加载
     clients: spring-boot-user
+
+logging:
+  level:
+    # 打开Feign日志级别，必须配置feign client的接口日志级别为debug
+    com.ai.spring.boot.content.feignclient.UserServiceFeignClient: debug
+
+feign:
+  client:
+    config:
+      # 全局配置
+      default:
+        loggerLevel: basic
+      # 属性配置方法配置Feign日志级别
+      spring-boot-user:
+        loggerLevel: full
+
 ## 配置文件方式配置负载均衡
 #spring-boot-user:
 #  ribbon:
 #    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+
+
+

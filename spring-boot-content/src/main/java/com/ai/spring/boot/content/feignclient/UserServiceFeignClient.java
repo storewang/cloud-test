@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @Date 2020/3/26
  * @Version 1.0
  **/
+// 代码方式配置feign
+//@FeignClient(name = "spring-boot-user",configuration = UserServiceFeignConf.class)
 @FeignClient(name = "spring-boot-user")
 public interface UserServiceFeignClient {
     @GetMapping("/users/{id}")
