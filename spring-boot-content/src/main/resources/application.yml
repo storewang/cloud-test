@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: spring-boot-content
+  cloud:
+    nacos:
+      discovery:
+        # 指定nacos server地址
+        server-addr: localhost:8848
+        ip: 192.168.20.13
+        # 指定集群名称
+        cluster-name: NJ
+        metadata:
+          version: 2.0
+          target-version: 2.0
+server:
+  port: 9999
+  tomcat:
+    max-threads: 20
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include:
+        - health
+        - info
+        - metrics
+info:
+  app-name: spring-boot-content
+  author: 石头
+
+ribbon:
+  eager-load:
+    # 开启饥饿加载
+    enabled: true
+    # 为哪些服务开启饥饿加载
+    clients: spring-boot-user
+## 配置文件方式配置负载均衡
+#spring-boot-user:
+#  ribbon:
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule

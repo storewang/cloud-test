@@ -1,8 +1,0 @@
-spring:
-  cloud:
-    config:
-      uri: http://config:9091
-      profile: eureka2
-      label: master
-  application:
-    name: cloud-nacos-eureka-server

@@ -1,9 +1,0 @@
-spring:
-  cloud:
-    config:
-      uri: http://config:9091
-      profile: dev
-      label: master
-  application:
-    name: cloud-nacos-consumer-test
-

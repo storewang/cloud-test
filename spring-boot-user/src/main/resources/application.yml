@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: spring-boot-user
+  cloud:
+    nacos:
+      discovery:
+        # 指定nacos server地址
+        server-addr: localhost:8848
+        ip: 192.168.20.13
+        metadata:
+          version: 2.0
+        # 指定namespace 跨namespace服务不能调用
+        #namespace: 151ce241-f6f0-4862-9175-60b82c9d5b34
+        # 指定集群名称
+        cluster-name: NJ
+server:
+  port: 8899
+  tomcat:
+    max-threads: 20
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include:
+        - health
+        - info
+        - metrics
+info:
+  app-name: spring-boot-user
+  author: 石头

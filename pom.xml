@@ -2,180 +2,119 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.5.RELEASE</version>
-    </parent>
-
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mgzf.flat</groupId>
-    <artifactId>cloud-test</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+
+    <groupId>com.ai.spring.im</groupId>
+    <artifactId>spring-boot-test</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>spring-boot-chart</module>
+        <module>spring-boot-user</module>
+        <module>spring-boot-content</module>
+        <module>spring-boot-common</module>
+    </modules>
     <packaging>pom</packaging>
 
-    <modules>
-        <module>cloud-test-nacos-console</module>
-        <module>cloud-nacos-core</module>
-        <module>cloud-nacos-discovery-server</module>
-        <module>cloud-nacos-discovery-client</module>
-        <module>cloude-test-sentinel-console</module>
-        <module>cloud-nacos-config-server</module>
-        <module>cloud-nacos-consumer-test</module>
-        <module>cloud-nacos-eureka-server</module>
-        <module>cloud-nacos-common</module>
-        <module>cloud-nacos-provider-test</module>
-    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
 
-        <sentinel-version>1.4.2</sentinel-version>
-
-        <docker.image.prefix>yiyun8</docker.image.prefix>
-        <!-- log4j conf -->
-        <log4j2.level>debug</log4j2.level>
-        <log4j2.root.path>/home/apprun/logs/${project.name}</log4j2.root.path>
-        <log4j2.error.path>/home/apprun/logs/${project.name}-error</log4j2.error.path>
-        <log4j2.package.path>/home/apprun/logs/${project.name}-kk</log4j2.package.path>
+        <lombok.version>1.18.8</lombok.version>
+        <mapstruct.version>1.2.0.Final</mapstruct.version>
     </properties>
 
     <dependencies>
-        <!-- web server -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jetty</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <!-- Import dependency management from spring-cloud -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.1.1.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2.1.1.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Finchley.SR1</version>
+                <version>Greenwich.SR5</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
-                <!-- Import dependency management from spring-cloud-alibaba -->
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>0.2.1.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>4.1.16.Final</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.protostuff</groupId>
+                <artifactId>protostuff-core</artifactId>
+                <version>1.5.9</version>
             </dependency>
             <dependency>
-                <groupId>com.mgzf.flat</groupId>
-                <artifactId>cloud-nacos-common</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <groupId>io.protostuff</groupId>
+                <artifactId>protostuff-runtime</artifactId>
+                <version>1.5.9</version>
             </dependency>
-            <!-- sentinel dependency management -->
+
+            <!--mapStruct依赖-->
             <dependency>
-                <groupId>com.alibaba.csp</groupId>
-                <artifactId>sentinel-core</artifactId>
-                <version>${sentinel-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.csp</groupId>
-                <artifactId>sentinel-web-servlet</artifactId>
-                <version>${sentinel-version}</version>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-jdk8</artifactId>
+                <version>${mapstruct.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.alibaba.csp</groupId>
-                <artifactId>sentinel-transport-simple-http</artifactId>
-                <version>${sentinel-version}</version>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.alibaba.csp</groupId>
-                <artifactId>sentinel-parameter-flow-control</artifactId>
-                <version>${sentinel-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-eureka-server</artifactId>
-                <version>1.4.3.RELEASE</version>
-            </dependency>
-            <!--<dependency>
-                <groupId>com.alibaba.csp</groupId>
-                <artifactId>sentinel-datasource-nacos</artifactId>
-                <version>${sentinel-version}</version>
-            </dependency>-->
         </dependencies>
     </dependencyManagement>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
+        <pluginManagement>
+            <plugins>
+                <!-- java编译插件 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.6.2</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <encoding>UTF-8</encoding>
 
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <configuration>
-                    <repository>${docker.image.prefix}/${project.build.finalName}</repository>
-                    <buildArgs>
-                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-                    </buildArgs>
-                    <tag>${project.version}</tag>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <encoding>utf-8</encoding>
-                    <useDefaultDelimiters>true</useDefaultDelimiters>
-                    <nonFilteredFileExtensions>
-                        <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>xls</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>zip</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>cer</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>pfx</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>py</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>keystore</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>ico</nonFilteredFileExtension>
-                    </nonFilteredFileExtensions>
-                </configuration>
-            </plugin>
-        </plugins>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>
