@@ -22,14 +22,23 @@ ServerListUpdater | 更新交给ribbon的实例列表策略 | PollingServerListU
 #### ribbon内置规则
 规则名称 | 特点 | 
 :-:|:-:|:-:
+
 AvailabilityFilteringRule | 过滤掉一直连接失败的被标记为ciruit tripped的后端server，并过滤掉那些高并发的后端server或者使用一个 |
+
 AvailabilityPredicate来包含过滤server的逻辑，其实就是检查status里记录的各个server的运行状态 | 
+
 BestAvailableRule | 选择一个最小的并发请求server，如果server被tripped了，则跳过 | 
+
 RandomRule | 随机选择一个server | 
+
 ResponseTimeWeightedRule | 已废弃 |
+
 RetryRule | 对选定的负载策略机上重试机制，在一个配置时间段内当选择server不成功,则一直尝试使用subRule的方式选择一个可用的server | 
+
 RoundRobbinRule | 轮询选择,轮询index，选择index对应的server | 
+
 WeightedResponseTimeRule | 根据响应时间加权，响应时间越长，权重越小，被选择的可能性越小 |
+
 ZoneAvoidanceRule | 复合判断server所zone的性能和server的可用性选择server,在没有zone的环境下，类似轮询(RoundRobinRule) | 
 
 #### ribbon轮询算法(RoundRobbinRule)
