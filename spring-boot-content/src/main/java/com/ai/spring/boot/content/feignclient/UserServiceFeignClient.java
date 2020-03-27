@@ -1,5 +1,7 @@
 package com.ai.spring.boot.content.feignclient;
 
+import com.ai.spring.boot.content.feignclient.fallback.UserServiceFallback;
+import com.ai.spring.boot.content.feignclient.fallback.UserServiceFallbackFactory;
 import com.ai.spring.boot.content.service.dto.UserDTO;
 import com.ai.spring.im.common.bean.Response;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -15,7 +17,11 @@ import org.springframework.web.bind.annotation.PathVariable;
  **/
 // 代码方式配置feign
 //@FeignClient(name = "spring-boot-user",configuration = UserServiceFeignConf.class)
-@FeignClient(name = "spring-boot-user")
+@FeignClient(name = "spring-boot-user",
+        // fallback和fallbackFactory只能选一个
+        //fallback = UserServiceFallback.class,
+        fallbackFactory = UserServiceFallbackFactory.class
+        )
 public interface UserServiceFeignClient {
     @GetMapping("/users/{id}")
     Response<UserDTO> findById(@PathVariable("id")Long userId);

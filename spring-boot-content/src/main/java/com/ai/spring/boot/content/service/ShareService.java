@@ -8,6 +8,7 @@ import com.ai.spring.boot.content.service.dto.ShareDTO;
 import com.ai.spring.boot.content.service.dto.UserDTO;
 import com.ai.spring.boot.content.util.JacksonJsonParser;
 import com.ai.spring.im.common.bean.Response;
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -37,6 +38,15 @@ public class ShareService {
     private DiscoveryClient discoveryClient;
     @Autowired
     private UserServiceFeignClient userServiceFeignClient;
+
+    /**
+     * 没有测试出效果
+     */
+    @SentinelResource("common")
+    public void testSentinel(){
+        log.info("------testSentinel调用了-------");
+    }
+
     public ShareDTO findById(Long shareId){
         Share share = shareDao.selectByPrimaryKey(shareId);
         /** UserDTO userDTO = getUserFromRemote(share.getUserId());*/
