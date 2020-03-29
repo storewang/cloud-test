@@ -6,7 +6,7 @@ spring:
       discovery:
         # 指定nacos server地址
         server-addr: localhost:8848
-        ip: 192.168.20.13
+        ip: 192.168.31.110
         metadata:
           version: 2.0
         # 指定namespace 跨namespace服务不能调用
