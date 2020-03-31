@@ -112,3 +112,7 @@ public interface UserFeignClient {
 * RT
 > 平均响应时间（秒级统计）超出阈值且在时间窗口内通过的请求>=5触发降级
 > 时间窗口结束关闭降级
+
+
+#### nacos配置管理
+* nacos dataId ： 服务名称-profile.yaml

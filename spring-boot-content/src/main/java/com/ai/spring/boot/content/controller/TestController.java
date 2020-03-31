@@ -12,8 +12,10 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,15 +35,23 @@ import java.util.List;
 @RestController
 @RequestMapping("/test")
 @Slf4j
+@RefreshScope
 public class TestController {
     @Autowired
     private DiscoveryClient discoveryClient;
     @Autowired
     private ShareService shareService;
+    @Value("${your.configuration: haha}")
+    private String testConfig;
     @GetMapping("/users")
     public List<ServiceInstance> getInstances(){
         List<ServiceInstance> instances = discoveryClient.getInstances("spring-boot-user");
         return instances;
+    }
+
+    @GetMapping("/testConfig")
+    public String testConfig(){
+        return testConfig;
     }
 
     @GetMapping("/test-a")

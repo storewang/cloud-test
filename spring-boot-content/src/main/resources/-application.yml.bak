@@ -5,8 +5,8 @@ spring:
     nacos:
       discovery:
         # 指定nacos server地址
-        server-addr: localhost:8848
-        ip: 192.168.31.110
+        server-addr: 192.168.20.13:8848
+        ip: 192.168.20.13
         # 指定集群名称
         cluster-name: NJ
         metadata:
@@ -18,10 +18,10 @@ spring:
         enabled: false
       transport:
         # 指定sentinel控制台地址
-        dashboard: 192.168.31.110:8080
-        clientIp: 192.168.31.110
+        dashboard: 192.168.20.13:8080
+        clientIp: 192.168.20.13
       rules:
-        base-path: E:/datas
+        base-path: G:/tmp
 
 server:
   port: 9999

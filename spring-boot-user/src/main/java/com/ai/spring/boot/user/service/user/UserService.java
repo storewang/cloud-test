@@ -24,7 +24,7 @@ public class UserService {
     private UserDTOConvert convert;
 
     public UserDTO findById(Long userId){
-        log.info("我请调用了----");
+        log.info("我被调用了----");
         User user = userDao.selectByPrimaryKey(userId);
         return convert.toDto(user);
     }

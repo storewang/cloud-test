@@ -34,7 +34,7 @@ public class FileDataSourceInit implements InitFunc {
     /**规则文件存放的根目录*/
     private String ruleDir;
 
-    // json转换相关配置
+    /** json转换相关配置 */
     private Converter<String,List<FlowRule>> flowRuleListParser = source -> JSON.parseObject(source,new TypeReference<List<FlowRule>>(){});
     private Converter<String,List<DegradeRule>> degradeRuleListParser = source -> JSON.parseObject(source,new TypeReference<List<DegradeRule>>(){});
     private Converter<String,List<SystemRule>> systemRuleListParser = source -> JSON.parseObject(source,new TypeReference<List<SystemRule>>(){});

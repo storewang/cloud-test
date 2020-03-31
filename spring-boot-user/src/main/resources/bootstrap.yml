@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        # 配置管理服务器地址
+        server-addr: 192.168.20.13:8848
+        file-extension: yaml
+  application:
+    name: spring-boot-user
+  profiles:
+    active: dev
+
+server:
+  port: 8888
+  tomcat:
+    max-threads: 20
