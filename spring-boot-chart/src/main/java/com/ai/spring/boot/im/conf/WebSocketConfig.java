@@ -16,8 +16,8 @@ import javax.annotation.Resource;
  * @Date 2020/3/3
  * @Version 1.0
  **/
-//@Configuration
-//@EnableWebSocket
+@Configuration
+@EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
     @Resource
     private MessageHandler messageHandler;
