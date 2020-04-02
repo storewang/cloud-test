@@ -1,1 +1,1 @@
-com.ai.spring.boot.content.conf.sentinel.file.FileDataSourceInit
+com.ai.spring.boot.content.conf.sentinel.nacos.NacosDataSourceInit

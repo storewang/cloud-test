@@ -3,6 +3,7 @@ package com.ai.spring.boot.content.util;
 
 import com.ai.spring.boot.content.conf.SentinelConf;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -12,6 +13,8 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class SentinelConfUtil {
+    @Value("${spring.application.name}")
+    private String applicationName;
     @Autowired
     private SentinelConf sentinelConf;
     private static SentinelConfUtil sentinelConfUtil;
@@ -28,4 +31,7 @@ public class SentinelConfUtil {
         return sentinelConfUtil;
     }
 
+    public String getApplicationName() {
+        return applicationName;
+    }
 }
