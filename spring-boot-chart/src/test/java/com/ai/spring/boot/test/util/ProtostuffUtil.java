@@ -1,5 +1,7 @@
 package com.ai.spring.boot.test.util;
 
+import com.ai.spring.boot.im.dto.ShellImageBody;
+import com.ai.spring.boot.im.dto.ShellImageDTO;
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;
 import io.protostuff.Schema;
@@ -66,5 +68,24 @@ public class ProtostuffUtil {
             }
         }
         return schema;
+    }
+
+
+    public static void main(String[] args) {
+        ShellImageDTO imageDTO = new ShellImageDTO();
+        imageDTO.setErrorCode("10000");
+        imageDTO.setMsg("成功");
+
+        ShellImageBody data = new ShellImageBody();
+        data.setId(10000000001L);
+        data.setPath("/images/01/test.jpg");
+        data.setImageUrl("http://image.mgzf.com/room/01/test.jpg");
+
+        imageDTO.setData(data);
+
+        byte[] serializeData = serialize(imageDTO);
+
+        ShellImageDTO deserialize = deserialize(serializeData, ShellImageDTO.class);
+        System.out.println(deserialize);
     }
 }
