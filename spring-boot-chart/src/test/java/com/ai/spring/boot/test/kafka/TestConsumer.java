@@ -6,7 +6,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.Test;
 
 import java.time.Duration;
@@ -23,7 +22,7 @@ import java.util.Properties;
  **/
 @Slf4j
 public class TestConsumer {
-    private Properties getProducerConf(String clientId){
+    private Properties getConsumerConf(String clientId){
         Properties properties = new Properties();
         properties.put("bootstrap.servers","192.168.60.103:9093,192.168.60.103:9094,192.168.60.103:9095");
         properties.put("group.id","test-group111");
@@ -39,11 +38,12 @@ public class TestConsumer {
 
     /**
      * kafka新APi（0.10以上）
+     * subscribe 自动监听消息，其实就是循环poll，没有消息时，达到超时时间返回，有消息时立即返回
      */
     @Test
     public void testConsumer(){
         String clientId = "1000003";
-        KafkaConsumer<String,String> consumer = new KafkaConsumer(getProducerConf(clientId));
+        KafkaConsumer<String,String> consumer = new KafkaConsumer(getConsumerConf(clientId));
         consumer.subscribe(Arrays.asList("test-topic1"), new ConsumerRebalanceListener() {
             @Override
             public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
@@ -73,11 +73,12 @@ public class TestConsumer {
 
     /**
      * kafka新APi（0.10以上）
+     * assign 需要自己管理offset,不会自动提交offset
      */
     @Test
     public void testAssignConsumer(){
         String clientId = "1000004";
-        KafkaConsumer<String,String> consumer = new KafkaConsumer(getProducerConf(clientId));
+        KafkaConsumer<String,String> consumer = new KafkaConsumer(getConsumerConf(clientId));
         consumer.assign(Arrays.asList(new TopicPartition("test-topic1",0),new TopicPartition("test-topic1",1)));
 
         while (true){
