@@ -37,12 +37,12 @@ public class IMApplication implements ApplicationListener<ApplicationReadyEvent>
     public RestTemplate restTemplate(){
         return new RestTemplate();
     }
-    @Bean
-    public HttpMessageConverters fastJsonHttpMessageConverters(){
-        MyFastJsonHttpMessageConverter converter = new MyFastJsonHttpMessageConverter();
-        FastJsonConfig config = new FastJsonConfig();
-        config.setSerializerFeatures(SerializerFeature.PrettyFormat);
-        converter.setFastJsonConfig(config);
-        return new HttpMessageConverters(converter);
-    }
+//    @Bean
+//    public HttpMessageConverters fastJsonHttpMessageConverters(){
+//        MyFastJsonHttpMessageConverter converter = new MyFastJsonHttpMessageConverter();
+//        FastJsonConfig config = new FastJsonConfig();
+//        config.setSerializerFeatures(SerializerFeature.PrettyFormat);
+//        converter.setFastJsonConfig(config);
+//        return new HttpMessageConverters(converter);
+//    }
 }
