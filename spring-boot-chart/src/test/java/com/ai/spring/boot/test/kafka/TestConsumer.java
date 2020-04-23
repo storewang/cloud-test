@@ -44,7 +44,8 @@ public class TestConsumer {
     public void testConsumer(){
         String clientId = "1000003";
         KafkaConsumer<String,String> consumer = new KafkaConsumer(getConsumerConf(clientId));
-        consumer.subscribe(Arrays.asList("test-topic1"), new ConsumerRebalanceListener() {
+
+        consumer.subscribe(Arrays.asList("MOGO-OTHER-MD-ROOMES-SYNC"), new ConsumerRebalanceListener() {
             @Override
             public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
                 partitions.forEach(topicPartition -> {
@@ -66,7 +67,7 @@ public class TestConsumer {
             ConsumerRecords<String,String> records = consumer.poll(Duration.ofMillis(10000));
             records.forEach(record -> {
                 log.info("消费消息 {}：topic={},partition={},offset={},key={},value={}",
-                        clientId,record.topic(),record.partition(),record.key(),record.value());
+                        clientId,record.topic(),record.partition(),record.offset(),record.key(),record.value());
             });
         }
     }
@@ -85,7 +86,7 @@ public class TestConsumer {
             ConsumerRecords<String,String> records = consumer.poll(Duration.ofMillis(10000));
             records.forEach(record -> {
                 log.info("消费消息 {}：topic={},partition={},offset={},key={},value={}",
-                        clientId,record.topic(),record.partition(),record.key(),record.value());
+                        clientId,record.topic(),record.partition(),record.offset(),record.key(),record.value());
             });
         }
     }
