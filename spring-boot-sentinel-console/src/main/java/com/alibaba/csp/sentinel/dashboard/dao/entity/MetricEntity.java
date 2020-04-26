@@ -56,4 +56,36 @@ public class MetricEntity {
         entity.setResource(oldEntity.getResource());
         return entity;
     }
+
+    public synchronized void addPassQps(Long passQps) {
+        this.passQps += passQps;
+    }
+
+    public synchronized void addBlockQps(Long blockQps) {
+        this.blockQps += blockQps;
+    }
+
+    public synchronized void addExceptionQps(Long exceptionQps) {
+        this.exceptionQps += exceptionQps;
+    }
+
+    public synchronized void addCount(int count) {
+        this.count += count;
+    }
+
+    public synchronized void addRtAndSuccessQps(double avgRt, Long successQps) {
+        this.rt += avgRt * successQps;
+        this.successQps += successQps;
+    }
+
+    /**
+     * {@link #rt} = {@code avgRt * successQps}
+     *
+     * @param avgRt      average rt of {@code successQps}
+     * @param successQps
+     */
+    public synchronized void setRtAndSuccessQps(double avgRt, Long successQps) {
+        this.rt = avgRt * successQps;
+        this.successQps = successQps;
+    }
 }
