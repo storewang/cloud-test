@@ -3,4 +3,5 @@ VOLUME /tmp
 ARG JAR_FILE
 ADD ${JAR_FILE} app.jar
 ENV profiles dev
+EXPOSE 9999
 ENTRYPOINT ["java","-Dspring.profiles.active=${profiles} -Djava.security.egd=file:/dev/urandom","-jar","/app.jar"]
