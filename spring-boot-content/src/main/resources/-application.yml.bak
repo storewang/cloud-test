@@ -24,7 +24,7 @@ spring:
         base-path: G:/tmp
 
 server:
-  port: 9999
+#  port: 9999
   tomcat:
     max-threads: 20
 management:
