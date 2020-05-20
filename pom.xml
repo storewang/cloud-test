@@ -28,6 +28,7 @@
         <lombok.version>1.18.8</lombok.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
 
+        <docker.base.dir>G:\source\mogo_dubbo\mgzf-flat-proj\cloud-test\docker-file</docker.base.dir>
         <docker.image.prefix>yiyun8</docker.image.prefix>
     </properties>
 
@@ -101,7 +102,7 @@
                 <plugin>
                     <groupId>com.spotify</groupId>
                     <artifactId>dockerfile-maven-plugin</artifactId>
-                    <version>1.4.9</version>
+                    <version>1.4.13</version>
                 </plugin>
                 <plugin>
                     <groupId>com.spotify</groupId>

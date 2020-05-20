@@ -1,7 +1,7 @@
-FROM openjdk:8-jdk-alpine
+FROM yiyun8/openjdk:8-mic-v10
 VOLUME /tmp
 ARG JAR_FILE
 ADD ${JAR_FILE} app.jar
-ENV profiles dev
-EXPOSE 9999 8719
-ENTRYPOINT ["java","-Dspring.profiles.active=${profiles}","-Djava.security.egd=file:/dev/urandom","-jar","/app.jar"]
+ENV appname=app.jar
+WORKDIR /
+EXPOSE 8080 8719
