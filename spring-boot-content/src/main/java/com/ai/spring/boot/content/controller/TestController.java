@@ -85,6 +85,9 @@ public class TestController {
         flowRule.setGrade(RuleConstant.FLOW_GRADE_QPS);
         flowRule.setLimitApp("default");
         rules.add(flowRule);
+        // 添加已经存在的流控
+        List<FlowRule> ruleList = FlowRuleManager.getRules();
+        rules.addAll(ruleList);
         FlowRuleManager.loadRules(rules);
     }
 
