@@ -87,7 +87,12 @@ public class NacosReadDataSource<T> extends AbstractDataSource<String, T> {
         if (configService == null) {
             throw new IllegalStateException("Nacos config service has not been initialized or error occurred");
         }
-        return configService.getConfig(conf.getDataId(), conf.getGroupId(), conf.getReadTimeout());
+        log.info("---------NacosReadDataSource:{}---------",conf);
+        long timeoutMs = 3000L;
+        if (conf.getReadTimeout()!=null){
+            timeoutMs = conf.getReadTimeout();
+        }
+        return configService.getConfig(conf.getDataId(), conf.getGroupId(), timeoutMs);
     }
 
     @Override

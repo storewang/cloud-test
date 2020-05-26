@@ -41,6 +41,7 @@ public class NacosDataSourceInit implements InitFunc {
 
     @Override
     public void init() throws Exception {
+        log.info("---------NacosDataSourceInit---Start------");
         SentinelConf sentinelConf = SentinelConfUtil.getSentinelConfUtil().getSentinelConf();
 
         // 流控规则
@@ -93,6 +94,8 @@ public class NacosDataSourceInit implements InitFunc {
         // 写
         WritableDataSource<List<ParamFlowRule>> paramFlowRuleWDS = new NacosWritableDataSource<>(paramFlowRuleConf,this::encodeJosn);
         ModifyParamFlowRulesCommandHandler.setWritableDataSource(paramFlowRuleWDS);
+
+        log.info("---------NacosDataSourceInit--End-------");
     }
 
     private <T>NacosReadDataSource<T> getReadRuleDs(SentinelConf conf,Converter<String, T> parser){
@@ -103,6 +106,8 @@ public class NacosDataSourceInit implements InitFunc {
         ruleConf.setDataId(SentinelConfUtil.getSentinelConfUtil().getApplicationName() + "-" + dataId);
         ruleConf.setGroupId(sentinelConf.getGroupId());
         ruleConf.setNacosServer(sentinelConf.getNacosServer());
+        ruleConf.setReadTimeout(sentinelConf.getReadTimeout());
+
         return ruleConf;
     }
 

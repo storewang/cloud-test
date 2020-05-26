@@ -41,5 +41,8 @@ public class SentinelConf {
     @PostConstruct
     public void init(){
         log.info("---------sentinel.rules.basePath:{}---------",basePath);
+        log.info("---------sentinel.nacosServer:{}---------",nacosServer);
+        log.info("---------sentinel.groupId:{}---------",groupId);
+        log.info("---------sentinel.readTimeout:{}---------",readTimeout);
     }
 }
