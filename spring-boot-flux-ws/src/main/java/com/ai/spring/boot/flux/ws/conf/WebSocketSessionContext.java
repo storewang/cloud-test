@@ -1,5 +1,6 @@
 package com.ai.spring.boot.flux.ws.conf;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Flux;
@@ -13,10 +14,13 @@ import reactor.core.publisher.Flux;
  **/
 @Slf4j
 public class WebSocketSessionContext {
+    @Getter
     private WebSocketSession socketSession;
-
-    public WebSocketSessionContext(WebSocketSession socketSession) {
+    @Getter
+    private String userId;
+    public WebSocketSessionContext(WebSocketSession socketSession,String userId) {
         this.socketSession = socketSession;
+        this.userId = userId;
     }
 
     public void sendData(String mesg){

@@ -41,7 +41,7 @@ public class KafkaProduceAutoConfiguration {
         properties.put("max.block.ms",getIntegerVal(kafkaProperties.getMaxBlockMs(),60000));
         properties.put("key.serializer", StringSerializer.class.getName());
         properties.put("value.serializer",StringSerializer.class.getName());
-        if (StringUtils.isEmpty(kafkaProperties.getPartitioner())){
+        if (!StringUtils.isEmpty(kafkaProperties.getPartitioner())){
             properties.put("partitioner.class",kafkaProperties.getPartitioner());
         }
 

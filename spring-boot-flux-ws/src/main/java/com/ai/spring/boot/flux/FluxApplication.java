@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Version 1.0
  **/
 @SpringBootApplication
-@EnableKafkaMq(KafkaTypeEnum.CONSUMER)
+@EnableKafkaMq(KafkaTypeEnum.PRODUCER)
 public class FluxApplication {
     public static void main(String[] args) {
         SpringApplication.run(FluxApplication.class,args);

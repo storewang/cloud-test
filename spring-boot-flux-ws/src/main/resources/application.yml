@@ -2,7 +2,7 @@ spring:
   application:
     name: spring-boot-flux-ws
 server:
-  port: 9080
+  port: 9081
 
 mq:
   kafka:
@@ -12,5 +12,10 @@ mq:
       maxPoolNum: 100
       maxPoolTimeOut: 200
       workPoolQueueSize: 100
+    produce:
+      brokerList: 192.168.60.103:9093,192.168.60.103:9094,192.168.60.103:9095
+      ack: all
+      retries: 3
+      linger: 20
 
 

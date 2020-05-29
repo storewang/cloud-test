@@ -8,6 +8,7 @@ import com.ai.spring.boot.flux.ws.util.Constans;
 import com.ai.spring.boot.flux.ws.util.EchoMessageJsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -37,6 +38,9 @@ import java.util.stream.Collectors;
 public class EchoHandler implements WebSocketHandler{
     @Autowired
     private WebSocketContext webSocketContext;
+    @Autowired
+    @Qualifier("messageServiceFactory")
+    private MessageService messageService;
     @Override
     public Mono<Void> handle(WebSocketSession session) {
         HandshakeInfo handshakeInfo = session.getHandshakeInfo();
@@ -47,60 +51,28 @@ public class EchoHandler implements WebSocketHandler{
 
         log.info("--------login token:{}--------",token);
         final String from = token;
+
         Mono<Void> mono = session.receive().doOnSubscribe(s -> {
             log.info("--------发起连接:{}--------------", session.getId());
-            webSocketContext.addSocketSession(session.getId(),from);
-            webSocketContext.addSocketSession(from,new WebSocketSessionContext(session));
-        }).doOnTerminate(() -> {
+            // 摘取用户对应的离线还有发送的消息，进行消息推送(这里只拉取那些消息发送给自己的，也就是to指向自己的消息)
+            webSocketContext.addSocketSession(session.getId(),from,new WebSocketSessionContext(session,from)); })
+
+        .doOnTerminate(() -> {
             log.info("--------关闭连接:{}--------------", session.getId());
-            webSocketContext.removeSocketSessionWithSessionId(session.getId());
-        }).doOnComplete(() -> {
-            log.info("--------连接完成:{}--------------", session.getId());
-        }).doOnCancel(() -> {
-            log.info("--------连接取消:{}--------------", session.getId());
-        }).doOnNext(message -> {
-            if (message.getType().equals(WebSocketMessage.Type.PING)){
-                log.info("--------收到ping消息:{}--------------", message.getPayloadAsText());
-                session.send(Flux.just(session.pongMessage(s -> s.wrap(new byte[256])))).then().toProcessor();
-            }else if (message.getType().equals(WebSocketMessage.Type.PONG)){
-                log.info("--------收到pong消息:{}--------------", message.getPayloadAsText());
-            }else if (message.getType().equals(WebSocketMessage.Type.TEXT)){
-                String content = message.getPayloadAsText();
-                log.info("--------收到消息:--------------", content);
-                EchoMessage echoMessage;
-                try{
-                    echoMessage = EchoMessageJsonUtil.parser(content);
-                }catch (Throwable e){
-                    echoMessage = null;
-                }
+            webSocketContext.removeSocketSessionWithSessionId(session.getId()); })
 
-                if (echoMessage == null){
-                    log.info("--------消息解释失败:{}--------------", content);
-                    EchoMessage errorMessage = new EchoMessage();
-                    errorMessage.setFrom(from);
-                    errorMessage.setMsg("消息解释失败，不予处理。");
-                    webSocketContext.getSocketSessionWithSessionId(session.getId()).sendData(EchoMessageJsonUtil.toJson(errorMessage));
-                }else {
-                    EchoMessage toMessage = new EchoMessage();
-                    toMessage.setFrom(from);
-                    toMessage.setMsg(echoMessage.getMsg());
-                    toMessage.setMsgType(echoMessage.getMsgType());
+        .doOnComplete(() -> log.info("--------连接完成:{}--------------", session.getId()) )
 
-                    webSocketContext.getSocketSession(echoMessage.getTo()).sendData(EchoMessageJsonUtil.toJson(toMessage));
-                }
-            }else {
-                log.info("--------收到{}类型的消息--------------", message.getType());
-                EchoMessage echoMessage = new EchoMessage();
-                echoMessage.setFrom(from);
-                echoMessage.setMsg("不支持的消息类型，目前只支持文件消息和心跳消息");
+        .doOnCancel(() -> log.info("--------连接取消:{}--------------", session.getId()) )
 
-                webSocketContext.getSocketSessionWithSessionId(session.getId()).sendData(EchoMessageJsonUtil.toJson(echoMessage));
-            }
-        }).doOnError(e -> {
-            log.info("--------发生错误.--------------", e);
-        }).doOnRequest(r -> {
-            log.info("--------发送请求:{}.--------------", session.getId());
-        }).then();
+        .doOnNext(message -> {
+            WebSocketSessionContext socketSessionContext = webSocketContext.getSocketSessionWithSessionId(session.getId());
+            messageService.handlerMsg(socketSessionContext,message.getType(),message.getPayloadAsText()); })
+
+        .doOnError(e -> log.info("--------发生错误.--------------", e) )
+
+        .doOnRequest(r -> log.info("--------发送请求:{}.--------------", session.getId()) )
+        .then();
 
         return mono;
     }

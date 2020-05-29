@@ -12,4 +12,6 @@ public final class Constans {
     public static final String PARAM_KV_SPLIT = "=";
     public static final String PARAM_TOKEN    = "token";
     public static final String EMPTY_STR      = "";
+    public static final String SERVICE_NAME   = "MSG-SERVICE-";
+    public static final String MESSAGE_TOPIC  = "MSG-DIRECT-TOPIC";
 }
