@@ -119,6 +119,7 @@ public class WebSocketContext {
         // 如果不在线（集群中没有一个连接信息，则为离线，只要有一个连接信息则为在线），则存入离线消息表，等用户下次启动重新建立连接后，获取离线消息，并推送给客户端。
 
         // 这里简化处理逻辑，只要不在本机器上的连接都进行消息发送，不处理在其他机器上的登录
+        // 也可以不用消息,改用接口直接调用，具体地址从注册中心获取，如果集群机器少，采用这种简单，不需要依赖消息中间件
         if (CollectionUtils.isEmpty(sessionIds)){
             MqProducerRecord record = new MqProducerRecord();
             record.setTopic(Constans.MESSAGE_TOPIC);
