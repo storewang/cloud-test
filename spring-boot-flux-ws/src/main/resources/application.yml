@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: spring-boot-flux-ws
+server:
+  port: 9080
+
+mq:
+  kafka:
+    consumer:
+      brokerList: 192.168.60.103:9093,192.168.60.103:9094,192.168.60.103:9095
+      autoCommit: true
+      maxPoolNum: 100
+      maxPoolTimeOut: 200
+      workPoolQueueSize: 100
+
+

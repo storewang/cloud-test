@@ -17,6 +17,8 @@
         <module>spring-boot-sentinel-console</module>
         <module>spring-boot-stream-produce</module>
         <module>spring-boot-stream-consumer</module>
+        <module>spring-boot-flux-ws</module>
+        <module>spring-boot-mq-kafak-starter</module>
     </modules>
     <packaging>pom</packaging>
 
