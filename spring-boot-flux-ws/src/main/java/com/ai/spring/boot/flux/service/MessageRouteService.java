@@ -34,6 +34,7 @@ public class MessageRouteService {
     @Autowired
     private WebClient.Builder webClientBuilder;
     public void sendMessage(EchoMessage message){
+        // 过滤掉本进程的数据，与本进程关联的数据，大之前的接口已经发送了。
         List<String> registHosts = redisService.getRegistHostsWithoutLocal(message.getTo());
         if (CollectionUtils.isEmpty(registHosts)){
             return;
@@ -46,12 +47,6 @@ public class MessageRouteService {
             //postMessageWithRestTemplate(message,remoteUrl);
             postMessageWithWebClient(message,remoteUrl);
 
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-//            HttpEntity<String> postEntity = new HttpEntity(EchoMessageJsonUtil.toJson(message),headers);
-//            String result = restTemplate.postForEntity(remoteUrl,postEntity,String.class).getBody();
-//
-//            log.info("-----------post : {} result={}------------",remoteUrl,result);
         });
     }
 
