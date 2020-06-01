@@ -1,10 +1,9 @@
 package com.ai.spring.boot.flux.ws.conf;
 
+import com.ai.spring.boot.flux.service.MessageRouteService;
+import com.ai.spring.boot.flux.service.RedisService;
 import com.ai.spring.boot.flux.ws.dto.EchoMessage;
-import com.ai.spring.boot.flux.ws.util.Constans;
 import com.ai.spring.boot.flux.ws.util.EchoMessageJsonUtil;
-import com.ai.spring.im.common.mq.producer.MqProducer;
-import com.ai.spring.im.common.mq.producer.MqProducerRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -38,8 +36,12 @@ public class WebSocketContext {
     private ConcurrentHashMap<String,List<String>> userSessionsMap = new ConcurrentHashMap<>(16);
     /**用户信息记录与删除时的锁*/
     private ReentrantLock lock = new ReentrantLock();
+//    @Autowired
+//    private MqProducer mqProducer;
     @Autowired
-    private MqProducer mqProducer;
+    private MessageRouteService messageRouteService;
+    @Autowired
+    private RedisService redisService;
     /**
      * 记录客户连接与session的映射关系
      * 这里可以注册到注册中心记录客户端上线信息
@@ -58,6 +60,9 @@ public class WebSocketContext {
             userSessionsMap.putIfAbsent(uid,sessionList);
         }
         sessionList.add(sessionId);
+
+        // 添加注册信息
+        redisService.registWsHost(uid,sessionId);
         lock.unlock();
     }
 
@@ -73,6 +78,8 @@ public class WebSocketContext {
             socketContext.remove(sessionId);
             userSessionsMap.get(uid).remove(sessionId);
         });
+        // 删除注册信息
+        redisService.unRegistHost(uid,sessionId);
         lock.unlock();
     }
 
@@ -120,14 +127,18 @@ public class WebSocketContext {
 
         // 这里简化处理逻辑，只要不在本机器上的连接都进行消息发送，不处理在其他机器上的登录
         // 也可以不用消息,改用接口直接调用，具体地址从注册中心获取，如果集群机器少，采用这种简单，不需要依赖消息中间件
-        if (CollectionUtils.isEmpty(sessionIds)){
-            MqProducerRecord record = new MqProducerRecord();
-            record.setTopic(Constans.MESSAGE_TOPIC);
-            record.setMsgKey(echoMessage.getTo());
-            record.setContent(echoMessage.getMsg());
+//        if (CollectionUtils.isEmpty(sessionIds)){
+//            MqProducerRecord record = new MqProducerRecord();
+//            record.setTopic(Constans.MESSAGE_TOPIC);
+//            record.setMsgKey(echoMessage.getTo());
+//            record.setContent(echoMessage.getMsg());
 
-            mqProducer.send(record,null);
-        }
+//            mqProducer.send(record,null);
+//        }
+
+        // 不敢本机器上有没有连接，都进行转发一次，在route里判断是否有其他连接.
+        messageRouteService.sendMessage(echoMessage);
+
     }
 
     /**
@@ -140,7 +151,7 @@ public class WebSocketContext {
     public void sendMessage(EchoMessage echoMessage,String sessionId){
         WebSocketSessionContext socketSession = getSocketSessionWithSessionId(sessionId);
         if (socketSession!=null){
-            socketSession.sendData(EchoMessageJsonUtil.toJson(echoMessage));
+            socketSession.sendData(echoMessage.getMsg());
             //TODO 标记消息已发送
         }else {
             // 这种情况的概率比较小，就是调用这个方法进行消息发送时，客户端正好关闭或是退出了。

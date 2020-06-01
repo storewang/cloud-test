@@ -1,8 +1,15 @@
 spring:
   application:
     name: spring-boot-flux-ws
+  redis:
+    host: 192.168.60.103
+    port: 6379
+    # password: MjdkZTc2NTBlODA1NTJlOGY4
+    timeout: 5000
+    database: 0
 server:
   port: 9081
+  address: 192.168.20.13
 
 mq:
   kafka:

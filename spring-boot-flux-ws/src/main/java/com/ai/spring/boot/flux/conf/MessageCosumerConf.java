@@ -1,15 +1,6 @@
 package com.ai.spring.boot.flux.conf;
 
-import com.ai.spring.boot.flux.ws.conf.WebSocketContext;
-import com.ai.spring.boot.flux.ws.util.Constans;
-import com.ai.spring.im.common.mq.consumer.MqConsumer;
-import com.ai.spring.mq.kafka.EnableKafkaMq;
-import com.ai.spring.mq.kafka.enums.KafkaTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
 
 /**
  * 消息消费，这里是由其他机器分发出来的消息。
@@ -26,16 +17,17 @@ import javax.annotation.PostConstruct;
  * @Date 2020/5/29
  * @Version 1.0
  **/
-@Configuration
-@EnableKafkaMq(KafkaTypeEnum.CONSUMER)
+//@Configuration
+//@EnableKafkaMq(KafkaTypeEnum.CONSUMER)
 @Slf4j
 public class MessageCosumerConf {
-    @Autowired
-    private MqConsumer consumer;
-    @Autowired
-    private WebSocketContext webSocketContext;
-    @PostConstruct
+    //@Autowired
+    //private MqConsumer consumer;
+    //@Autowired
+    //private WebSocketContext webSocketContext;
+    //@PostConstruct
     public void init(){
+        /***
         consumer.consumer(Constans.MESSAGE_TOPIC,(metadata, e)->{
             String clientId = metadata.getMsgId();
             if (e!=null){
@@ -47,5 +39,6 @@ public class MessageCosumerConf {
 
             webSocketContext.sendMessage(userId,metadata.getMsg());
         });
+         ****/
     }
 }

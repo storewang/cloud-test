@@ -23,10 +23,15 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!--<dependency>
             <groupId>com.ai.spring.im</groupId>
             <artifactId>spring-boot-mq-kafak-starter</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
+        </dependency>-->
     </dependencies>
     <build>
         <finalName>spring-boot-flux-ws</finalName>
