@@ -34,12 +34,11 @@ public class MessageRouteService {
     @Autowired
     private WebClient.Builder webClientBuilder;
     public void sendMessage(EchoMessage message){
-        // 过滤掉本进程的数据，与本进程关联的数据，大之前的接口已经发送了。
+        // 过滤掉本进程的数据，与本进程关联的数据，之前的接口已经发送了。
         List<String> registHosts = redisService.getRegistHostsWithoutLocal(message.getTo());
         if (CollectionUtils.isEmpty(registHosts)){
             return;
         }
-
 
         registHosts.stream().forEach(host -> {
 

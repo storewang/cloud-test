@@ -1,4 +1,4 @@
-FROM yiyun8/openjdk:8-mic-v10
+FROM yiyun8/openjdk:8-mic-v11
 VOLUME /tmp
 ARG JAR_FILE
 ADD ${JAR_FILE} app.jar

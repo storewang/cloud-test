@@ -10,6 +10,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,6 +44,13 @@ public class RedisService implements RegistHostService {
         String uidCacheKeys = CACHE_PREFIX_KEY + getLocalHost();
         setOperations.add(uidCacheKeys,uid);
 
+    }
+
+    public Boolean isUserOnline(String uid){
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        String cacheSessionKeys = CACHE_PREFIX_KEY + uid;
+        Long size = setOperations.size(cacheSessionKeys);
+        return Optional.ofNullable(size).filter(key -> key!=null && key.compareTo(0L)>0).map(key -> Boolean.TRUE).orElse(Boolean.FALSE);
     }
 
     public void unRegistHost(String uid,String sessionId){

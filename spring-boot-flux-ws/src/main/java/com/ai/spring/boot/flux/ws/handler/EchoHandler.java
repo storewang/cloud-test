@@ -54,8 +54,10 @@ public class EchoHandler implements WebSocketHandler{
 
         Mono<Void> mono = session.receive().doOnSubscribe(s -> {
             log.info("--------发起连接:{}--------------", session.getId());
-            // 摘取用户对应的离线还有发送的消息，进行消息推送(这里只拉取那些消息发送给自己的，也就是to指向自己的消息)
-            webSocketContext.addSocketSession(session.getId(),from,new WebSocketSessionContext(session,from)); })
+            // 添加用户连接注册信息
+            webSocketContext.addSocketSession(session.getId(),from,new WebSocketSessionContext(session,from));
+            // TODO 拉取用户对应的还未发送的消息，进行消息推送(这里只拉取那些消息发送给自己的，也就是to指向自己的消息)
+        })
 
         .doOnTerminate(() -> {
             log.info("--------关闭连接:{}--------------", session.getId());

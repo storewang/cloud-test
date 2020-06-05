@@ -1,0 +1,56 @@
+spring:
+  # 配置 Jpa
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: true
+    show-sql: true
+  # 数据源配置
+  datasource:
+    #driverClassName: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: tptest
+    password: abc123
+    url: jdbc:mysql://localhost:3306/docker_test?characterEncoding=UTF-8&useUnicode=true&useSSL=false
+
+  application:
+    name: spring-boot-gateway
+  redis:
+    host: 192.168.60.103
+    port: 6379
+    # password:
+    timeout: 5000
+    database: 0
+  cloud:
+    nacos:
+      discovery:
+        # 指定nacos server地址
+        server-addr: localhost:8848
+        # ip: 192.168.20.13
+    gateway:
+      #discovery:
+      #  locator:
+           # 让gateway通过服务发现组件找到其他微服务
+        #  enabled: true
+      # 采用动态存储模式(数据库存储)
+      # routes:
+
+server:
+  #port: 8040
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include:
+        - health
+        - info
+        - gateway
+        - metrics
+info:
+  app-name: spring-boot-gateway
+  author: 石头

@@ -3,6 +3,28 @@ set -e
 ARG_NUM=$#
 JAVA_OPS="-Djava.security.egd=file:/dev/urandom"
 
+if [ -z $jvmSize ]; then
+   echo "set jvm_sizes"
+   jvmSize="-server -Xms512m -Xmx512m -XX:NewSize=128m -XX:MetaspaceSize=200m -XX:MaxMetaspaceSize=200m -XX:MaxDirectMemorySize=200m"
+fi
+
+if [ -z $printGc ]; then
+   echo "set print_pc_opt"
+   printGc="-Xloggc:/logs/gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M"
+fi
+
+JAVA_OPS="${JAVA_OPS} ${jvmSize} ${printGc}"
+
+if [ $dumpError ]; then
+   echo "set dump_error"
+   JAVA_OPS="${JAVA_OPS} -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/logs/dump.log"
+fi
+
+if [ $jvmDebugPort ]; then
+   echo "set jvm_debug_port"
+   JAVA_OPS="${JAVA_OPS} -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${jvmDebugPort}"
+fi
+
 if [ -z $profiles ]; then
    echo "set profiles"
    profiles="dev"
@@ -23,6 +45,16 @@ fi
 if [ -z $appname ]; then
    echo "set appname"
    appname="app.jar"
+fi
+
+if [ $discoveryServer ]; then
+    echo "set discoveryServer"
+    JAVA_OPS="${JAVA_OPS} -Dspring.cloud.nacos.discovery.server-addr=${discoveryServer}"
+fi
+
+if [ $optExt ]; then
+    echo "set opt_ext"
+    JAVA_OPS="${JAVA_OPS} ${optExt}"
 fi
 
 JAVA_OPS="${JAVA_OPS} -jar ${appname}"

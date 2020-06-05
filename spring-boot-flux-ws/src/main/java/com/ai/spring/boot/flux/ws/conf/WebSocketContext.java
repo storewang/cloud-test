@@ -113,7 +113,13 @@ public class WebSocketContext {
      * @param echoMessage
      */
     public void sendMessage(EchoMessage echoMessage){
-        // TODO 消息持久化存储，默认为未发送状态
+        if (!redisService.isUserOnline(echoMessage.getTo())){
+            // 不在线，记录离线消息，其就是记录消息为未发送状态 TODO
+            return;
+        }
+
+        // TODO 消息持久化存储，默认为未发送状态，
+        // 当连接不在本机器上时，需要进行消息转发，如果不记录消息，转发失败时，消息就丢失了。
         List<String> sessionIds = userSessionsMap.get(echoMessage.getTo());
         if (!CollectionUtils.isEmpty(sessionIds)){
             // 如果sessionId不为空，这些对应的sessionId一定与本机器进行了连接
@@ -123,7 +129,7 @@ public class WebSocketContext {
         // 这里可以使用注册中心进行判断是还有在其他机器的连接信息
         // 这里可以使用注册中心进行判断是否在线，来判断这个消息是否需要保存到离线消息表中
         // 如果在线则转发消息.1: 使用kafka等分布式消息，2: 获取具体的连接进行消息分发.
-        // 如果不在线（集群中没有一个连接信息，则为离线，只要有一个连接信息则为在线），则存入离线消息表，等用户下次启动重新建立连接后，获取离线消息，并推送给客户端。
+        // 如果不在线（集群中没有一个连接信息，则为离线，只要有一个连接信息则为在线），否则存入离线消息表，等用户下次启动重新建立连接后，获取离线消息，并推送给客户端。
 
         // 这里简化处理逻辑，只要不在本机器上的连接都进行消息发送，不处理在其他机器上的登录
         // 也可以不用消息,改用接口直接调用，具体地址从注册中心获取，如果集群机器少，采用这种简单，不需要依赖消息中间件

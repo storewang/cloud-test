@@ -1,8 +1,7 @@
-FROM openjdk:8-jdk-alpine
+FROM yiyun8/openjdk:8-mic-v11
 VOLUME /tmp
 ARG JAR_FILE
 ADD ${JAR_FILE} app.jar
-# ENV profiles dev
-# ENV nacos.standalone true
-EXPOSE 8848
-ENTRYPOINT ["java","-Dnacos.standalone=true -Djava.security.egd=file:/dev/urandom","-jar","/app.jar"]
+ENV appname=app.jar
+WORKDIR /
+EXPOSE 8080 8719
