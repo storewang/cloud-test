@@ -19,6 +19,7 @@
         <module>spring-boot-stream-consumer</module>
         <module>spring-boot-flux-ws</module>
         <module>spring-boot-mq-kafak-starter</module>
+        <module>spring-boot-ds-jpa</module>
     </modules>
     <packaging>pom</packaging>
 
