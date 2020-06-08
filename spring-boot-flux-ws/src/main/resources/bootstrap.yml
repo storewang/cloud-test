@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        # 配置管理服务器地址
+        server-addr: nacos:8080
+        file-extension: yaml
+  application:
+    name: spring-boot-flux-ws
+  profiles:
+    active: dev
+
+server:
+  port: 8080

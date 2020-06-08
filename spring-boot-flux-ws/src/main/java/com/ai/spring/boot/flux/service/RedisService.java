@@ -8,9 +8,10 @@ import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -103,8 +104,23 @@ public class RedisService implements RegistHostService {
         return CACHE_PREFIX_KEY + uid + CACHE_VAL_LINK + sessionId;
     }
     private String getLocalHost(){
-        String localHost = serverProperties.getAddress()==null?"127.0.0.1":serverProperties.getAddress().getHostAddress();
-        return getRegistVal(localHost,serverProperties.getPort());
+        String localHostAddress = getLocalHostAddress();
+        return getRegistVal(localHostAddress,serverProperties.getPort());
+    }
+    private String getLocalHostAddress(){
+        String hostAddress = "127.0.0.1";
+        InetAddress address = serverProperties.getAddress();
+        if (address == null){
+            try {
+                InetAddress localHost = InetAddress.getLocalHost();
+                hostAddress = localHost.getHostAddress();
+            } catch (UnknownHostException e) {
+                hostAddress = "127.0.0.1";
+            }
+        }else {
+            hostAddress = address.getHostAddress();
+        }
+        return hostAddress;
     }
     private String getRegistVal(String host,Integer port){
         return host + CACHE_VAL_LINK + port;
