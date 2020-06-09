@@ -1,7 +1,7 @@
 package com.ai.spring.boot.gateway.dao.repository.route;
 
+import com.ai.spring.boot.ds.dao.repository.BaseJpaRepository;
 import com.ai.spring.boot.gateway.dao.bean.RouteFilter;
-import com.ai.spring.boot.gateway.dao.repository.BaseJpaRepository;
 
 /**
  * 路由过滤策略

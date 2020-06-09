@@ -1,5 +1,6 @@
 package com.ai.spring.boot.gateway;
 
+import com.ai.spring.boot.ds.annotation.EnableJpaDataSource;
 import com.ai.spring.boot.gateway.routes.DataBaseRouteDefinitionRepository;
 import com.ai.spring.boot.gateway.service.RouteService;
 import com.zaxxer.hikari.HikariDataSource;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Bean;
  * @Version 1.0
  **/
 @SpringBootApplication
+@EnableJpaDataSource(basePackages = "com.ai.spring.boot.gateway.dao.repository.route",entityBasePackages = "com.ai.spring.boot.gateway.dao.bean")
 public class GatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(GatewayApplication.class,args);

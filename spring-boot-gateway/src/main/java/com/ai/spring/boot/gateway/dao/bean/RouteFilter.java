@@ -1,5 +1,6 @@
 package com.ai.spring.boot.gateway.dao.bean;
 
+import com.ai.spring.boot.ds.dao.bean.BaseEntity;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -18,7 +19,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name="gtway_route_filter")
-public class RouteFilter extends BaseEntity{
+public class RouteFilter extends BaseEntity {
     /**主键*/
     @Id
     private Long id;

@@ -1,19 +1,16 @@
 package com.ai.spring.boot.gateway.dao.impl;
 
+import com.ai.spring.boot.ds.annotation.OrderBy;
+import com.ai.spring.boot.ds.annotation.Query;
+import com.ai.spring.boot.ds.dao.BaseJpaDao;
+import com.ai.spring.boot.ds.jpa.IQueryCriteria;
 import com.ai.spring.boot.gateway.cache.annotation.Cacheable;
-import com.ai.spring.boot.gateway.dao.BaseJpaDao;
 import com.ai.spring.boot.gateway.dao.RouteBindingDao;
 import com.ai.spring.boot.gateway.dao.bean.RouteBinding;
 import com.ai.spring.boot.gateway.dao.repository.route.RouteBindingRepository;
-import com.ai.spring.boot.gateway.datasource.jpa.annotation.OrderBy;
-import com.ai.spring.boot.gateway.datasource.jpa.annotation.Query;
-import com.ai.spring.boot.gateway.datasource.jpa.query.IQueryCriteria;
 import com.ai.spring.im.common.enums.DataStatusEnum;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -44,7 +41,7 @@ public class RouteBindingDaoImpl extends BaseJpaDao<RouteBindingRepository,Route
         return Optional.ofNullable(routeBindings).orElseGet(() -> Collections.EMPTY_LIST);
     }
     @Data
-    private class RouteBindQuery implements IQueryCriteria{
+    private class RouteBindQuery implements IQueryCriteria {
         @Query
         private String routeId;
         @Query

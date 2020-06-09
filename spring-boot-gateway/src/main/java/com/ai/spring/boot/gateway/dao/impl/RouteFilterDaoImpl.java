@@ -1,7 +1,7 @@
 package com.ai.spring.boot.gateway.dao.impl;
 
+import com.ai.spring.boot.ds.dao.BaseJpaDao;
 import com.ai.spring.boot.gateway.cache.annotation.Cacheable;
-import com.ai.spring.boot.gateway.dao.BaseJpaDao;
 import com.ai.spring.boot.gateway.dao.RouteFilterDao;
 import com.ai.spring.boot.gateway.dao.bean.RouteFilter;
 import com.ai.spring.boot.gateway.dao.repository.route.RouteFilterRepository;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  **/
 @Component
 @Slf4j
-public class RouteFilterDaoImpl extends BaseJpaDao<RouteFilterRepository,RouteFilter>  implements RouteFilterDao {
+public class RouteFilterDaoImpl extends BaseJpaDao<RouteFilterRepository,RouteFilter> implements RouteFilterDao {
     @Override
     @Cacheable(key = "'gateway:route:keys:filters'+ #ids")
     public List<RouteFilter> findRouteFiltersByIds(List<Long> ids) {

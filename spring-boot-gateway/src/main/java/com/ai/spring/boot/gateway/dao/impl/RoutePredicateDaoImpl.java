@@ -1,9 +1,8 @@
 package com.ai.spring.boot.gateway.dao.impl;
 
+import com.ai.spring.boot.ds.dao.BaseJpaDao;
 import com.ai.spring.boot.gateway.cache.annotation.Cacheable;
-import com.ai.spring.boot.gateway.dao.BaseJpaDao;
 import com.ai.spring.boot.gateway.dao.RoutePredicateDao;
-import com.ai.spring.boot.gateway.dao.bean.RouteFilter;
 import com.ai.spring.boot.gateway.dao.bean.RoutePredicate;
 import com.ai.spring.boot.gateway.dao.repository.route.RoutePredicateRepository;
 import lombok.extern.slf4j.Slf4j;

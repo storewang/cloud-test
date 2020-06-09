@@ -1,5 +1,6 @@
 package com.ai.spring.boot.gateway.dao.bean;
 
+import com.ai.spring.boot.ds.dao.bean.BaseEntity;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -27,7 +28,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name="gtway_route_bind")
-public class RouteBinding extends BaseEntity{
+public class RouteBinding extends BaseEntity {
     /**主键*/
     @Id
     private Long id;
