@@ -22,7 +22,7 @@ fi
 
 if [ $jvmDebugPort ]; then
    echo "set jvm_debug_port"
-   JAVA_OPS="${JAVA_OPS} -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${jvmDebugPort}"
+   JAVA_OPS="${JAVA_OPS} -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${jvmDebugPort}"
 fi
 
 if [ -z $profiles ]; then
