@@ -8,7 +8,7 @@ spring:
   application:
     name: spring-boot-gateway
   profiles:
-    active: lc
+    active: dev
 
 server:
   port: 8040
