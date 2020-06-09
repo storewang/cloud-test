@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -26,6 +27,7 @@ import javax.sql.DataSource;
 /**这两个配置需要引用项目中进行配置*/
 //@EnableJpaRepositories(basePackages = {"com.ai.spring.boot.gateway.dao.repository.route"})
 //@EntityScan(basePackages = {"com.ai.spring.boot.gateway.dao.bean"})
+@ComponentScan(basePackages = "com.ai.spring.boot.ds.jpa")
 public class JpaDatasourceConfiguration {
     @Bean(name = "dataSource")
     @ConditionalOnMissingBean(DataSource.class)

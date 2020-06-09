@@ -14,4 +14,10 @@ public final class Constans {
     public static final String EMPTY_STR      = "";
     public static final String SERVICE_NAME   = "MSG-SERVICE-";
     public static final String MESSAGE_TOPIC  = "MSG-DIRECT-TOPIC";
+    /**消息未发送*/
+    public static final Integer MSG_STATUS_NO_SEND = 0;
+    /**消息已经发送*/
+    public static final Integer MSG_STATUS_SENDED  = 1;
+    /**消息已读*/
+    public static final Integer MSG_STATUS_READED  = 2;
 }

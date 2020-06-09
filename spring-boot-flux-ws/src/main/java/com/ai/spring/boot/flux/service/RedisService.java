@@ -85,7 +85,8 @@ public class RedisService implements RegistHostService {
         Set<String> members = setOperations.members(cacheKey);
         List<String> registHosts = new ArrayList<>();
         members.stream().forEach(cacheSessionKey -> {
-            Set<String> hosts = setOperations.members(cacheSessionKey);
+            String key = getCacheKey(uid,cacheSessionKey);
+            Set<String> hosts = setOperations.members(key);
             if (!CollectionUtils.isEmpty(hosts)){
                 registHosts.addAll(hosts);
             }

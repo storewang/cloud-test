@@ -1,5 +1,8 @@
 package com.ai.spring.boot.ds.dao;
 
+import com.ai.spring.boot.ds.dao.bean.Page;
+import com.ai.spring.boot.ds.jpa.IQueryCriteria;
+
 import java.util.List;
 
 /**
@@ -19,4 +22,7 @@ public interface IJpaDao<T> {
 
     List<T> findBySenstive(T entity);
     List<T> findAll();
+
+    List<T> queryByCriteria(IQueryCriteria queryCriteria, T entity);
+    Page<T> queryByCriteria(IQueryCriteria queryCriteria, T entity, Page<?> page);
 }

@@ -20,7 +20,7 @@ if [ $dumpError ]; then
    JAVA_OPS="${JAVA_OPS} -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/logs/dump.log"
 fi
 
-if [ $jvmDebugPort ]; then
+if [ $8099 ]; then
    echo "set jvm_debug_port"
    JAVA_OPS="${JAVA_OPS} -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=${jvmDebugPort}"
 fi

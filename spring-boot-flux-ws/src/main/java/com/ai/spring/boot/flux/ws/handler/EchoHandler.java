@@ -1,5 +1,6 @@
 package com.ai.spring.boot.flux.ws.handler;
 
+import com.ai.spring.boot.flux.dao.IFluxEchoMessageDao;
 import com.ai.spring.boot.flux.ws.annotion.WebSoketMapping;
 import com.ai.spring.boot.flux.ws.conf.WebSocketContext;
 import com.ai.spring.boot.flux.ws.conf.WebSocketSessionContext;
@@ -41,6 +42,8 @@ public class EchoHandler implements WebSocketHandler{
     @Autowired
     @Qualifier("messageServiceFactory")
     private MessageService messageService;
+    @Autowired
+    private IFluxEchoMessageDao messageDao;
     @Override
     public Mono<Void> handle(WebSocketSession session) {
         HandshakeInfo handshakeInfo = session.getHandshakeInfo();
@@ -56,7 +59,9 @@ public class EchoHandler implements WebSocketHandler{
             log.info("--------发起连接:{}--------------", session.getId());
             // 添加用户连接注册信息
             webSocketContext.addSocketSession(session.getId(),from,new WebSocketSessionContext(session,from));
-            // TODO 拉取用户对应的还未发送的消息，进行消息推送(这里只拉取那些消息发送给自己的，也就是to指向自己的消息)
+            // 拉取用户对应的还未发送的消息，进行消息推送(这里只拉取那些消息发送给自己的，也就是to指向自己的消息)
+            List<EchoMessage> notSendedMessages = messageDao.getNotSendedMessage(from);
+            webSocketContext.sendMessages(notSendedMessages);
         })
 
         .doOnTerminate(() -> {

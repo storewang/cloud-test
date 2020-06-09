@@ -33,16 +33,16 @@ public class MessageRouteService {
     private RestTemplate restTemplate;
     @Autowired
     private WebClient.Builder webClientBuilder;
-    public void sendMessage(EchoMessage message){
+    public void sendMessage(EchoMessage message,Long messageId){
         // 过滤掉本进程的数据，与本进程关联的数据，之前的接口已经发送了。
         List<String> registHosts = redisService.getRegistHostsWithoutLocal(message.getTo());
+        log.info("-----------转发消息messageId : {} registHosts={}------------",messageId,registHosts);
         if (CollectionUtils.isEmpty(registHosts)){
             return;
         }
-
         registHosts.stream().forEach(host -> {
 
-            String remoteUrl = HTTP_SCHEMA + host + SEND_MSG_METHOD;
+            String remoteUrl = HTTP_SCHEMA + host + SEND_MSG_METHOD + "/" + messageId;
             //postMessageWithRestTemplate(message,remoteUrl);
             postMessageWithWebClient(message,remoteUrl);
 
@@ -55,8 +55,10 @@ public class MessageRouteService {
      * @param remoteUrl
      */
     private void postMessageWithWebClient(EchoMessage message,String remoteUrl){
+        log.info("-----------转发消息post : {} remoteUrl={}------------",message,remoteUrl);
         Mono<String> bodyToMono = webClientBuilder.build().post().uri(remoteUrl).contentType(MediaType.APPLICATION_JSON_UTF8).syncBody(message).retrieve().bodyToMono(String.class);
         bodyToMono.subscribe(result -> log.info("-----------post : {} result={}------------",remoteUrl,result));
+        bodyToMono.doOnError(error -> log.error("-----------post : {} error={}------------",remoteUrl,error));
     }
 
     /**

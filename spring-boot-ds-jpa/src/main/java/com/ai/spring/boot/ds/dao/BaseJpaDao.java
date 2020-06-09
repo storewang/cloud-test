@@ -1,6 +1,7 @@
 package com.ai.spring.boot.ds.dao;
 
 import com.ai.spring.boot.ds.dao.bean.BaseEntity;
+import com.ai.spring.boot.ds.dao.bean.Page;
 import com.ai.spring.boot.ds.dao.repository.BaseJpaRepository;
 import com.ai.spring.boot.ds.jpa.IQueryCriteria;
 import com.ai.spring.boot.ds.jpa.SpecificationBuilder;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -139,5 +141,17 @@ public class BaseJpaDao<M extends BaseJpaRepository<T>,T extends BaseEntity> imp
     }
     public List<T> queryByCriteria(IQueryCriteria queryCriteria, T entity){
         return baseRespository.findAll(SpecificationBuilder.of(entity).build(queryCriteria));
+    }
+
+    public Page<T> queryByCriteria(IQueryCriteria queryCriteria,T entity,Page<?> page){
+        PageRequest pageRequest = PageRequest.of(page.getCurrentPage(),page.getPageSize());
+        org.springframework.data.domain.Page<T> result = baseRespository.findAll(SpecificationBuilder.of(entity).build(queryCriteria),pageRequest);
+
+        Page<T> data = Page.of(result.getContent());
+        data.setCurrentPage(page.getCurrentPage());
+        data.setTotalPage(result.getTotalPages());
+        data.setTotalSize(result.getTotalElements());
+        data.setPageSize(page.getPageSize());
+        return data;
     }
 }

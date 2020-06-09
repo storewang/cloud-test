@@ -31,7 +31,7 @@ public class ErrorMessageService implements MessageService {
         EchoMessage errorMessage = new EchoMessage();
         errorMessage.setFrom(from);
         errorMessage.setMsg(errMsg);
-        webSocketContext.sendMessage(errorMessage,sessionId);
+        webSocketContext.sendMessage(errorMessage,sessionId,null);
     }
 
     protected String getErrorMsg(String content){

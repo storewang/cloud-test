@@ -15,4 +15,6 @@ public class EchoMessage {
     private String to;
     private String msg;
     private int msgType;
+    /**消息ID,用于消息状态更新*/
+    private transient Long messageId;
 }

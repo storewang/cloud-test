@@ -1,5 +1,6 @@
 package com.ai.spring.boot.flux.ws.conf;
 
+import com.ai.spring.boot.flux.dao.IFluxEchoMessageDao;
 import com.ai.spring.boot.flux.service.MessageRouteService;
 import com.ai.spring.boot.flux.service.RedisService;
 import com.ai.spring.boot.flux.ws.dto.EchoMessage;
@@ -42,6 +43,8 @@ public class WebSocketContext {
     private MessageRouteService messageRouteService;
     @Autowired
     private RedisService redisService;
+    @Autowired
+    private IFluxEchoMessageDao messageDao;
     /**
      * 记录客户连接与session的映射关系
      * 这里可以注册到注册中心记录客户端上线信息
@@ -93,19 +96,29 @@ public class WebSocketContext {
      * @param userId
      * @param message
      */
-    public void sendMessage(String userId,String message){
+    public void sendMessage(String userId,String message,Long messageId){
         List<String> sessionIds = userSessionsMap.get(userId);
         if (!CollectionUtils.isEmpty(sessionIds)){
             sessionIds.stream().forEach(sessionId -> {
                 WebSocketSessionContext socketSession = getSocketSessionWithSessionId(sessionId);
                 if (socketSession!=null){
                     socketSession.sendData(message);
-                    //TODO 标记消息已发送
+
+                    Optional.ofNullable(messageId).ifPresent(id -> {
+                        // 标记消息已发送
+                        EchoMessage echoMessage = new EchoMessage();
+                        echoMessage.setMsg(message);
+                        echoMessage.setTo(userId);
+                        messageDao.updateEchoMessageSended(echoMessage,id);
+                    });
                 }
             });
         }
     }
-
+    /**批量发送消息*/
+    public void sendMessages(List<EchoMessage> messages){
+        Optional.ofNullable(messages).ifPresent(msgs -> msgs.stream().forEach(msg -> sendMessage(msg)));
+    }
     /**
      * 消息发送，根据消息接收者id进行消息发送
      * 同一个消息接收者Id有可能对应多个连接session
@@ -114,16 +127,25 @@ public class WebSocketContext {
      */
     public void sendMessage(EchoMessage echoMessage){
         if (!redisService.isUserOnline(echoMessage.getTo())){
-            // 不在线，记录离线消息，其就是记录消息为未发送状态 TODO
+            // 不在线，记录离线消息，其就是记录消息为未发送状态
+            messageDao.saveEchoMessage(echoMessage);
             return;
         }
 
-        // TODO 消息持久化存储，默认为未发送状态，
+        // 消息持久化存储，默认为未发送状态，
+        Long messageId = echoMessage.getMessageId();
+        if (messageId == null){
+            messageId = messageDao.saveEchoMessage(echoMessage);
+        }
+        final Long msgId = messageId;
+        log.info("--------消息发送:{}--------------", msgId);
         // 当连接不在本机器上时，需要进行消息转发，如果不记录消息，转发失败时，消息就丢失了。
         List<String> sessionIds = userSessionsMap.get(echoMessage.getTo());
+        log.info("-----{}---消息发送:{},{}--------------", sessionIds,echoMessage.getTo(),userSessionsMap);
         if (!CollectionUtils.isEmpty(sessionIds)){
             // 如果sessionId不为空，这些对应的sessionId一定与本机器进行了连接
-            sessionIds.stream().forEach(sessionId -> sendMessage(echoMessage,sessionId));
+            log.info("--------消息发送本机上的连接的客户端:{}--------------", msgId);
+            sessionIds.stream().forEach(sessionId -> sendMessage(echoMessage,sessionId,msgId));
         }
         // 还有可能一些连接不在本机器上，所以这里还要发送消息进行消息的分发
         // 这里可以使用注册中心进行判断是还有在其他机器的连接信息
@@ -143,7 +165,8 @@ public class WebSocketContext {
 //        }
 
         // 不敢本机器上有没有连接，都进行转发一次，在route里判断是否有其他连接.
-        messageRouteService.sendMessage(echoMessage);
+        log.info("-------->消息转发:{}--------------", msgId);
+        messageRouteService.sendMessage(echoMessage,msgId);
 
     }
 
@@ -154,11 +177,12 @@ public class WebSocketContext {
      * @param echoMessage
      * @param sessionId
      */
-    public void sendMessage(EchoMessage echoMessage,String sessionId){
+    public void sendMessage(EchoMessage echoMessage,String sessionId,Long messageId){
         WebSocketSessionContext socketSession = getSocketSessionWithSessionId(sessionId);
         if (socketSession!=null){
             socketSession.sendData(echoMessage.getMsg());
-            //TODO 标记消息已发送
+            // 标记消息已发送
+            messageDao.updateEchoMessageSended(echoMessage,messageId);
         }else {
             // 这种情况的概率比较小，就是调用这个方法进行消息发送时，客户端正好关闭或是退出了。
             // 这种情况要么做离线消息，要么不用理会，让其丢失。
