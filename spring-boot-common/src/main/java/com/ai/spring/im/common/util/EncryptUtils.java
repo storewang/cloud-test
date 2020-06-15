@@ -27,8 +27,11 @@ public class EncryptUtils {
      * 定义使用的算法为:PBEWITHMD5andDES算法
      */
     public static final String ALGORITHM = "PBEWithMD5AndDES";
-    /**默认密钥*/
+    /**默认盐值*/
     public static final String SALT = "63129318";
+    /**默认密钥*/
+    public static final String DEF_PWD = "wstone01.com";
+
 
     /**
      * 加密明文字符串
@@ -51,6 +54,9 @@ public class EncryptUtils {
         }
         return bytesToHexString(encipheredData);
     }
+    public static String encrypt(String plaintext, String salt) {
+        return encrypt(plaintext,DEF_PWD,salt);
+    }
 
     /**
      * 解密密文字符串
@@ -72,6 +78,9 @@ public class EncryptUtils {
             log.error("",e);
         }
         return new String(passDec);
+    }
+    public static String decrypt(String ciphertext, String salt) {
+        return decrypt(ciphertext,DEF_PWD,salt);
     }
 
     /**
