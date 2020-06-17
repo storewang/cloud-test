@@ -1,5 +1,6 @@
 package com.ai.spring.im.common.mq.queue;
 
+import com.ai.spring.im.common.mq.MqRecordMetadata;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.RejectedExecutionHandler;
@@ -19,20 +20,20 @@ public class MqDiscardPolicy implements RejectedExecutionHandler {
     public MqDiscardPolicy(MqArrayBlockingQueue arrayBlockingQueue) {
         this.blockingQueue = arrayBlockingQueue;
     }
-
+    @Override
     public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
         if (!e.isShutdown()) {
-//            if (r instanceof MsgRecieveTask){
-//                ConsumerRecord<String, String> record = ((MsgRecieveTask) r).getRecord();
-//                try {
-//                    boolean offer = blockingQueue.offer(record, 100, TimeUnit.MILLISECONDS);
-//                    if (!offer){
-//                        log.warn("->[{}]消息处理失败，线程池队列和消息处理队列已满，丢弃。blockQueue.size={}", record,blockingQueue.size());
-//                    }
-//                }catch (Exception e1) {
-//                    log.warn("->[{}]消息处理失败，线程池队列已满，丢弃。", record);
-//                }
-//            }
+            if (r instanceof ConsumerRecodeTask){
+                MqRecordMetadata record = ((ConsumerRecodeTask) r).getRecord();
+                try {
+                    boolean offer = blockingQueue.offer(record, 50, TimeUnit.MILLISECONDS);
+                    if (!offer){
+                        log.warn("->[{}]消息处理失败，线程池队列和消息处理队列已满，丢弃。blockQueue.size={}", record,blockingQueue.size());
+                    }
+                }catch (Exception e1) {
+                    log.warn("->[{}]消息处理失败，线程池队列已满，丢弃。", record);
+                }
+            }
         }
     }
 }

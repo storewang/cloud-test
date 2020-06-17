@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  **/
 @Component
 public class FluxEchoMessageDaoImpl extends BaseJpaDao<FluxEchoMessageRepository,FluxEchoMessage> implements IFluxEchoMessageDao {
-
+    @Override
     public Long saveEchoMessage(EchoMessage echoMessage){
         FluxEchoMessage fluxEchoMessage = new FluxEchoMessage();
         fluxEchoMessage.setSender(echoMessage.getFrom());
@@ -39,7 +39,7 @@ public class FluxEchoMessageDaoImpl extends BaseJpaDao<FluxEchoMessageRepository
         FluxEchoMessage addedData = save(fluxEchoMessage);
         return addedData.getId();
     }
-
+    @Override
     public Boolean updateEchoMessageSended(EchoMessage echoMessage,Long messageId){
         FluxEchoMessage fluxEchoMessage = new FluxEchoMessage();
         fluxEchoMessage.setId(messageId);
@@ -48,13 +48,13 @@ public class FluxEchoMessageDaoImpl extends BaseJpaDao<FluxEchoMessageRepository
         FluxEchoMessage updData = updateBySenstive(fluxEchoMessage);
         return updData!=null && updData.getId().equals(messageId);
     }
-
+    @Override
     public Boolean updateEchoMessageReaded(FluxEchoMessage fluxEchoMessage){
         fluxEchoMessage.setStatus(Constans.MSG_STATUS_READED);
         FluxEchoMessage updData = updateBySenstive(fluxEchoMessage);
         return updData!=null && updData.getId().equals(fluxEchoMessage.getId());
     }
-
+    @Override
     public List<EchoMessage> getNotSendedMessage(String sender){
         MessageQuery query = new MessageQuery();
         query.setReceiver(sender);
@@ -73,7 +73,7 @@ public class FluxEchoMessageDaoImpl extends BaseJpaDao<FluxEchoMessageRepository
                 }).collect(Collectors.toList()))
         ).orElse(Collections.EMPTY_LIST);
     }
-
+    @Override
     public List<FluxEchoMessage> getNewListMessage(FluxEchoMessage fluxEchoMessage){
         List<FluxEchoMessage> allMessages = new ArrayList<>();
         // 1. 查询接收的消息

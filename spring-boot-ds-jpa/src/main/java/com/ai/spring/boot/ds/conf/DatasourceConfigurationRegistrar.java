@@ -38,10 +38,11 @@ import java.util.Set;
 public class DatasourceConfigurationRegistrar implements ImportSelector,ImportBeanDefinitionRegistrar,ResourceLoaderAware, EnvironmentAware {
     private ResourceLoader resourceLoader;
     private Environment environment;
+    @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
-
+    @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
     }

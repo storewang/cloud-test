@@ -105,7 +105,7 @@ public class KafkaConsumer extends MqConsumer{
         @Override
         public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
             partitions.forEach(topicPartition -> {
-                // 之前客户端消息这个partition,现在不消息这个partition
+                // 之前客户端消费这个partition,现在不消费这个partition
                 log.info("Revoked partition for client {}:{}-{}",clientId,topicPartition.topic(),topicPartition.partition());
             });
         }

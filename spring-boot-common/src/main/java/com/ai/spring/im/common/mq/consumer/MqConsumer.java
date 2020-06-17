@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -45,7 +46,7 @@ public abstract class MqConsumer {
         int queueSize       = getProperty(properties,"thread.pool.queue.size",500);
 
         blockingQueue       = new MqArrayBlockingQueue(queueSize * 2);
-        poolExecutor        = new MqThreadPoolExecutor(corePoolSize,maximumPoolSize,keepAliveTime,new ArrayBlockingQueue<>(queueSize),new MqDiscardPolicy(blockingQueue));
+        poolExecutor        = new MqThreadPoolExecutor("consumer-pool",corePoolSize,maximumPoolSize,keepAliveTime,new ArrayBlockingQueue<>(queueSize),new MqDiscardPolicy(blockingQueue));
         // start monitor
         ThreadQueueMonitor.builder(poolExecutor,blockingQueue).starMonitor();
     }
@@ -61,10 +62,20 @@ public abstract class MqConsumer {
             MqConsumerRecords records = pollRecords(topic);
             log.info("--------------第{}次获取消息量:{}-------------------",fetchNum.getAndIncrement(),records.getCount());
 
-            records.forEach(record -> poolExecutor.execute(new DefaultConsumerRecordTask(getConsumerId(),record,callBack)));
+            if (records.getCount()>0){
+                try {
+                    CountDownLatch latch = new CountDownLatch(records.getCount());
+                    records.forEach(record -> poolExecutor.execute(new DefaultConsumerRecordTask(getConsumerId(), record, latch,callBack)));
 
-            // 队列中积压的消息
-            dealWithBlockQueue(getConsumerId(),callBack);
+                    latch.await();
+
+                    // 队列中积压的消息
+                    dealWithBlockQueue(getConsumerId(), callBack);
+                }catch (InterruptedException e) {
+                    log.warn("---------线程池被打断，不在续消费.---------");
+                    poolExecutor.shutdown();
+                }
+            }
 
             pollNext = needPollNext(topic);
         }
@@ -81,7 +92,7 @@ public abstract class MqConsumer {
         try{
             MqRecordMetadata record = blockingQueue.poll(100, TimeUnit.MILLISECONDS);
             while (record!=null){
-                poolExecutor.execute(new DefaultConsumerRecordTask(clientId,record,callBack));
+                poolExecutor.execute(new DefaultConsumerRecordTask(clientId,record,null,callBack));
                 record = blockingQueue.poll(100, TimeUnit.MILLISECONDS);
             }
         }catch (Throwable e){
