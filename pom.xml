@@ -20,6 +20,7 @@
         <module>spring-boot-flux-ws</module>
         <module>spring-boot-mq-kafak-starter</module>
         <module>spring-boot-ds-jpa</module>
+        <module>spring-boot-netty-ws</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -31,6 +31,7 @@ public class RedisService implements RegistHostService {
     private RedisTemplate<String,String> redisTemplate;
     @Autowired
     private ServerProperties serverProperties;
+    @Override
     public void registWsHost(String uid,String sessionId){
         // websocket:keys:uid:sessionId下面保存的是当前的host:port
         // websocket:keys:uid下保存的sessionId的列表缓存key
@@ -53,7 +54,7 @@ public class RedisService implements RegistHostService {
         Long size = setOperations.size(cacheSessionKeys);
         return Optional.ofNullable(size).filter(key -> key!=null && key.compareTo(0L)>0).map(key -> Boolean.TRUE).orElse(Boolean.FALSE);
     }
-
+    @Override
     public void unRegistHost(String uid,String sessionId){
         String cacheKey = getCacheKey(uid,sessionId);
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
@@ -78,7 +79,7 @@ public class RedisService implements RegistHostService {
             setOperations.remove(uidCacheKeys, members.toArray(new String[members.size()]));
         }
     }
-
+    @Override
     public List<String> getRegistHosts(String uid){
         String cacheKey = CACHE_PREFIX_KEY + uid;
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
@@ -95,6 +96,7 @@ public class RedisService implements RegistHostService {
 
         return registHosts;
     }
+    @Override
     public List<String> getRegistHostsWithoutLocal(String uid){
         List<String> allHosts = getRegistHosts(uid);
 
