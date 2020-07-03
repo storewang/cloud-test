@@ -13,6 +13,7 @@ public final class Consts {
     public static final String HTTP_SCHEMA       = "http://";
     public static final String HTTPS_SCHEMA      = "https://";
     public static final String FORWARD_METHOD    = "/sendMsg/%s";
+    public static final String HOME_METHOD       = "/";
     public static final String RSP_OK            = "ok";
     public static final String RSP_IGNORE        = "Ignore";
     public static final String STR_SPLIT         = ":";

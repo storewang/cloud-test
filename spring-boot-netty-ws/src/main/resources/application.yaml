@@ -7,7 +7,7 @@ spring:
       thread:
         bossThreadNum: 1
         workerThreadNum: 4
-        monitorPeriodSec: 600
+        monitorPeriodSec: 120
         heartBeatTimeSec: 600
   redis:
     host: 192.168.60.103

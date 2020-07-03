@@ -26,4 +26,5 @@ public class WebClientUtil {
         bodyToMono.subscribe(result -> log.info("-----------post : {} result={}------------",remoteUrl,result));
         bodyToMono.doOnError(error -> log.error("-----------post : {} error={}------------",remoteUrl,error));
     }
+
 }

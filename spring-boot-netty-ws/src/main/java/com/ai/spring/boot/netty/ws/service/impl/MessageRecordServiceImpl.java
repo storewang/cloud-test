@@ -6,6 +6,7 @@ import com.ai.spring.boot.netty.ws.model.MessageDTO;
 import com.ai.spring.boot.netty.ws.model.UserDTO;
 import com.ai.spring.boot.netty.ws.service.IMessageRecordService;
 import com.ai.spring.boot.netty.ws.util.MessageType;
+import com.ai.spring.boot.netty.ws.util.MessageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,16 +31,10 @@ public class MessageRecordServiceImpl implements IMessageRecordService {
         List<MessageRecord> recordList = messageRecordDao.getNewListMessage(sender, minMsgId);
 
         return Optional.ofNullable(recordList).flatMap(records -> {
-            List<MessageDTO> messageDTOS = records.stream().map(record -> {
-                MessageDTO.MessageDTOBuilder builder = MessageDTO.builder();
-                builder.content(record.getMsg());
-                builder.msgType(MessageType.MSG_CONTENT.getMsgType());
-                builder.msgId(record.getId().toString());
-                builder.from(UserDTO.builder().userCode(record.getSender()).build());
-                builder.to(UserDTO.builder().userCode(record.getReceiver()).build());
-                builder.createTime(record.getCreateTime());
-                return builder.build();
-            }).collect(Collectors.toList());
+            List<MessageDTO> messageDTOS = records
+                    .stream()
+                    .map(record -> MessageUtil.messageRecord2MessageDTO(record))
+                    .collect(Collectors.toList());
             return Optional.ofNullable(messageDTOS);
         }).orElse(Collections.EMPTY_LIST);
     }

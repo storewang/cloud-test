@@ -2,6 +2,7 @@ package com.ai.spring.boot.netty.ws.service.impl;
 
 import com.ai.spring.boot.netty.ws.service.RegistHostService;
 import com.ai.spring.boot.netty.ws.util.Consts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
  * @Version 1.0
  **/
 @Service
+@Slf4j
 public class RedisRegistHostService implements RegistHostService {
     private static final String CACHE_PREFIX_KEY = "websocket:keys:";
     private static final String CACHE_HOSTS_KEY  = "websocket:keys:bindHosts";
@@ -52,7 +54,9 @@ public class RedisRegistHostService implements RegistHostService {
     @Override
     public void unBindHost(String host){
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        setOperations.remove(CACHE_HOSTS_KEY,host);
+        Long remove = setOperations.remove(CACHE_HOSTS_KEY, host);
+
+        log.info("-------删除Key={},value={},result:{}----------",CACHE_HOSTS_KEY,host,remove);
     }
 
     @Override
