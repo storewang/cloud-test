@@ -25,7 +25,9 @@ import java.util.stream.Collectors;
 @Service
 public class RedisRegistHostService implements RegistHostService {
     private static final String CACHE_PREFIX_KEY = "websocket:keys:";
-    private static final String CACHE_HOSTS_KEY = "websocket:keys:bindHosts";
+    private static final String CACHE_HOSTS_KEY  = "websocket:keys:bindHosts";
+    private static final String HOST_ONLINES_KEY = "websocket:keys:host:onlines:";
+    private static final String TOTAL_ONLINES_KEY= "websocket:keys:total:onlines";
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
 
@@ -36,6 +38,10 @@ public class RedisRegistHostService implements RegistHostService {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
         setOperations.add(cacheKey,host);
         redisTemplate.expire(cacheKey,24, TimeUnit.HOURS);
+
+        String hostNumsKey = HOST_ONLINES_KEY + host;
+        redisTemplate.opsForValue().increment(hostNumsKey);
+        redisTemplate.opsForValue().increment(TOTAL_ONLINES_KEY);
     }
     @Override
     public void bindHost(String host){
@@ -43,6 +49,7 @@ public class RedisRegistHostService implements RegistHostService {
         setOperations.add(CACHE_HOSTS_KEY,host);
         redisTemplate.expire(CACHE_HOSTS_KEY,365, TimeUnit.DAYS);
     }
+    @Override
     public void unBindHost(String host){
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
         setOperations.remove(CACHE_HOSTS_KEY,host);
@@ -53,6 +60,10 @@ public class RedisRegistHostService implements RegistHostService {
         String cacheKey = getCacheKey(userCode);
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
         setOperations.remove(cacheKey,host);
+
+        String hostNumsKey = HOST_ONLINES_KEY + host;
+        redisTemplate.opsForValue().decrement(hostNumsKey);
+        redisTemplate.opsForValue().decrement(TOTAL_ONLINES_KEY);
     }
 
     @Override
@@ -74,6 +85,7 @@ public class RedisRegistHostService implements RegistHostService {
 
         return allHosts.stream().filter(h -> !h.equals(host)).collect(Collectors.toList());
     }
+    @Override
     public List<String> getBindHosts(){
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
         Set<String> members = setOperations.members(CACHE_HOSTS_KEY);
