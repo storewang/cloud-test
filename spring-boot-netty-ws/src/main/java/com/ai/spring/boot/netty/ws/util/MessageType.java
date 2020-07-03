@@ -26,7 +26,7 @@ public enum MessageType {
     /**用户群发*/
     USER_GROUP(3),
 
-    /**消息内容*/
+    /**聊天消息*/
     MSG_CONTENT(6),
 
     /**心跳消息*/

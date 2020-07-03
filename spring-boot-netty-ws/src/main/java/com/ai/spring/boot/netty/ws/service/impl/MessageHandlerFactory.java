@@ -19,8 +19,7 @@ import org.springframework.stereotype.Service;
 @Service("messageHandlerFactory")
 public class MessageHandlerFactory implements MessageHandler,ApplicationContextAware {
     private static final String DEF_HANDER_NAME = "MSG-SERVICE-DEF";
-    private static final String TXT_HANDER_NAME = "MSG-SERVICE-TEXT";
-    private static final String BEAT_HANDER_NAME = "MSG-SERVICE-PONG";
+    private static final String TXT_HANDER_NAME = "MSG-SERVICE-";
     private ApplicationContext context;
     @Override
     public void handler(DispatchMsgRequest request) {
@@ -31,15 +30,10 @@ public class MessageHandlerFactory implements MessageHandler,ApplicationContextA
             case USER_ERROR:
             case ACCESS_DENIED:
             case MSG_JSON_ERROR:
-            case USER_ONLINE:
-            case USER_OFFLINE:
                 messageHandler = context.getBean(DEF_HANDER_NAME,MessageHandler.class);
                 break;
-            case HEART_BEAT:
-                messageHandler = context.getBean(BEAT_HANDER_NAME,MessageHandler.class);
-                break;
             default:
-                messageHandler = context.getBean(TXT_HANDER_NAME,MessageHandler.class);
+                messageHandler = context.getBean(TXT_HANDER_NAME + msgType.getMsgType(),MessageHandler.class);
                 break;
         }
         messageHandler.handler(request);

@@ -27,7 +27,14 @@ public final class UserCodeUtil {
 
     public static String getTokenByUserCode(String userCode){
         String utoken = EncryptUtils.decrypt(userCode,EncryptUtils.DEF_PWD,EncryptUtils.SALT);
-        return utoken;
+
+        return Optional.ofNullable(utoken).flatMap(code -> {
+            String result = null;
+            if (code.indexOf(Consts.STR_SPLIT)>-1){
+                result =  code.split(Consts.STR_SPLIT)[0];
+            }
+            return Optional.ofNullable(result);
+        }).orElse(null);
     }
 
     public static String getUserToken(UserDTO userDTO){

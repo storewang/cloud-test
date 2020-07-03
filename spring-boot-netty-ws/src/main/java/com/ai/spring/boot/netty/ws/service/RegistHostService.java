@@ -11,7 +11,10 @@ import java.util.List;
  **/
 public interface RegistHostService {
     void registWsHost(String userCode,String host);
+    void bindHost(String host);
+    void unBindHost(String host);
     void unRegistHost(String userCode,String host);
     List<String> getRegistHosts(String userCode);
+    List<String> getBindHosts();
     List<String> getRegistHostsWithoutLocal(String userCode,String host);
 }

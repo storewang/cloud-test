@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class RedisRegistHostService implements RegistHostService {
     private static final String CACHE_PREFIX_KEY = "websocket:keys:";
+    private static final String CACHE_HOSTS_KEY = "websocket:keys:bindHosts";
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
 
@@ -35,6 +36,16 @@ public class RedisRegistHostService implements RegistHostService {
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
         setOperations.add(cacheKey,host);
         redisTemplate.expire(cacheKey,24, TimeUnit.HOURS);
+    }
+    @Override
+    public void bindHost(String host){
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        setOperations.add(CACHE_HOSTS_KEY,host);
+        redisTemplate.expire(CACHE_HOSTS_KEY,365, TimeUnit.DAYS);
+    }
+    public void unBindHost(String host){
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        setOperations.remove(CACHE_HOSTS_KEY,host);
     }
 
     @Override
@@ -62,6 +73,15 @@ public class RedisRegistHostService implements RegistHostService {
         List<String> allHosts = getRegistHosts(userCode);
 
         return allHosts.stream().filter(h -> !h.equals(host)).collect(Collectors.toList());
+    }
+    public List<String> getBindHosts(){
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        Set<String> members = setOperations.members(CACHE_HOSTS_KEY);
+        return Optional.ofNullable(members).map(datas -> {
+            List<String> list = new ArrayList<>();
+            list.addAll(datas);
+            return list;
+        }).orElse(Collections.EMPTY_LIST);
     }
 
     private String getCacheKey(String userCode){

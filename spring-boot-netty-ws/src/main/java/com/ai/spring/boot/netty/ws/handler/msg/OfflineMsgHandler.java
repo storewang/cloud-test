@@ -6,43 +6,28 @@ import com.ai.spring.boot.netty.ws.model.MessageDTO;
 import com.ai.spring.boot.netty.ws.model.UserDTO;
 import com.ai.spring.boot.netty.ws.service.BusinessThreadService;
 import com.ai.spring.boot.netty.ws.service.ServerHandlerService;
+import com.ai.spring.boot.netty.ws.util.MessageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
- * 消息处理
+ * 用户下线通知消息,群发
  *
  * @author 石头
- * @Date 2020/6/30
+ * @Date 2020/7/3
  * @Version 1.0
  **/
-@Service("MSG-SERVICE-6")
-public class TextMsgHandler implements MessageHandler {
+@Service("MSG-SERVICE-2")
+public class OfflineMsgHandler implements MessageHandler {
     @Autowired
     private ServerHandlerService serverHandlerService;
     @Autowired
     private BusinessThreadService threadService;
-
     @Override
     public void handler(DispatchMsgRequest request) {
         MessageDTO message = request.getMessage();
-        UserDTO to = message.getTo();
-        List<UserDTO> tos = message.getTos();
-        // 单回
-        if (to!=null){
-            sendMsg(to,message);
-        }else if (tos!=null && tos.size()>0){
-            // 群回
-            tos.stream().forEach(toUser -> sendMsg(toUser,message));
-        }
-    }
+        message.setMsgType(MessageType.USER_GROUP.getMsgType());
 
-    private void sendMsg(UserDTO to,MessageDTO message){
-        message.setTo(to);
-        message.setTos(null);
-
-        threadService.execute(new TextMsgHandlerTask(to,message,serverHandlerService));
+        threadService.execute(new TextMsgHandlerTask(UserDTO.builder().build(),message,serverHandlerService));
     }
 }

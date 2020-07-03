@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @Date 2020/6/30
  * @Version 1.0
  **/
-@Service("MSG-SERVICE-PONG")
+@Service("MSG-SERVICE-8")
 public class PingMsgHandler implements MessageHandler {
     private static final String PONG_MSG = "PONG";
     @Override

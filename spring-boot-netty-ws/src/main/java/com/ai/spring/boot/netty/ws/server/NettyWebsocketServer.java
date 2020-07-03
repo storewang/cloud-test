@@ -67,6 +67,7 @@ public class NettyWebsocketServer implements Server{
             try {
                 channelFuture = bootstrap.bind(bindAddress).sync();
                 log.info("----------websocket bind in {}:{}-------------",host,port);
+                serverHandlerService.bindHost();
 
                 channelFuture.channel().closeFuture().addListener(ChannelFutureListener.CLOSE);
             } catch (InterruptedException e) {
@@ -89,6 +90,7 @@ public class NettyWebsocketServer implements Server{
                 workerGroup.shutdownGracefully();
             }
             threadQueueMonitor.stopMonitor();
+            serverHandlerService.unBindHost();
         }catch (Throwable e){
             log.error("---server stopped error!!---",e);
         }

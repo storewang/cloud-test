@@ -6,6 +6,7 @@ import com.ai.spring.boot.netty.ws.model.UserDTO;
 import com.ai.spring.boot.netty.ws.service.ServerHandlerService;
 import com.ai.spring.boot.netty.ws.thread.BusinessThreadTask;
 import com.ai.spring.boot.netty.ws.util.MessageJsonUtil;
+import com.ai.spring.im.common.util.IdWorker;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +37,16 @@ public class TextMsgHandlerTask implements BusinessThreadTask {
 
     @Override
     public void run() {
-        // 记录消息
-        Long msgId = serverHandlerService.saveMessage(message);
+        Long msgId = null;
+        ClientChannel clientChannel = null;
+        if (message.getTo()!=null || message.getTos()!=null){
+            // 记录消息
+            msgId = serverHandlerService.saveMessage(message);
+            clientChannel = serverHandlerService.getClientChannelByUcode(toUser.getUserCode());
+        }else {
+            msgId = IdWorker.getId();
+        }
 
-        ClientChannel clientChannel = serverHandlerService.getClientChannelByUcode(toUser.getUserCode());
         // 与本机进行连接
         if (clientChannel!=null){
             Channel channel = clientChannel.getChannel();

@@ -53,7 +53,8 @@ public interface ServerHandlerService {
      * @param clientChannel
      */
     void register(ClientChannel clientChannel);
-
+    void bindHost();
+    void unBindHost();
     /**
      * 注销账户信息
      * @param token

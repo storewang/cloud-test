@@ -136,6 +136,23 @@ public class TextWebSocketFrameHandler extends UserChannelHandler<TextWebSocketF
         log.info("-----------{}:用户断开连接---------------",token);
         serverHandlerService.unRegister(token,channel.id().toString());
 
+        // 下线通知
+        MessageDTO message = null;
+        DispatchMsgRequest request = null;
+        ClientChannel.ClientChannelBuilder builder = ClientChannel.builder();
+        builder.channel(channel)
+                .channelId(channel.id().toString())
+                .host(serverProperties.getHost())
+                .port(serverProperties.getPort());
+
+        UserDTO user = serverHandlerService.getUserByToken(token);
+        user.setUserCode(UserCodeUtil.getUserCode(token,channel.id().toString(),user));
+        builder.token(token).user(user);
+        message = new MessageDTO(user,String.format("%s已下线",user.getUserName()),MessageType.USER_OFFLINE.getMsgType());
+        ClientChannel clientChannel = builder.build();
+        request = DispatchMsgRequest.builder().message(message).channel(clientChannel).token(token).build();
+        serverHandlerService.dispatcher(request);
+
         super.channelUnregistered(ctx);
     }
 }

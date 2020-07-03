@@ -1,0 +1,7 @@
+FROM yiyun8/openjdk:8-mic-v11
+VOLUME /tmp
+ARG JAR_FILE
+ADD ${JAR_FILE} app.jar
+ENV appname=app.jar
+WORKDIR /
+EXPOSE 8080 10081

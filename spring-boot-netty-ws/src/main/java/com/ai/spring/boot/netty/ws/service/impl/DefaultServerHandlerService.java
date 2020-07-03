@@ -13,6 +13,7 @@ import com.ai.spring.boot.netty.ws.service.RegistHostService;
 import com.ai.spring.boot.netty.ws.service.ServerHandlerService;
 import com.ai.spring.boot.netty.ws.util.Consts;
 import com.ai.spring.boot.netty.ws.util.MessageJsonUtil;
+import com.ai.spring.boot.netty.ws.util.MessageType;
 import com.ai.spring.boot.netty.ws.util.UserCodeUtil;
 import com.ai.spring.boot.netty.ws.util.WebClientUtil;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -81,8 +82,10 @@ public class DefaultServerHandlerService implements ServerHandlerService {
 
     @Override
     public UserDTO getUserByCode(String code) {
-        String token = UserCodeUtil.getTokenByUserCode(code);
-        return getUserByToken(token);
+        String token    = UserCodeUtil.getTokenByUserCode(code);
+        UserDTO userDTO = getUserByToken(token);
+        userDTO.setUserCode(code);
+        return userDTO;
     }
 
     @Override
@@ -97,6 +100,14 @@ public class DefaultServerHandlerService implements ServerHandlerService {
         clientRegisters.putIfAbsent(userCode,clientChannel);
 
         registHostService.registWsHost(userCode,serverProperties.getWebHost());
+    }
+    @Override
+    public void bindHost(){
+        registHostService.bindHost(serverProperties.getWebHost());
+    }
+    @Override
+    public void unBindHost(){
+        registHostService.unBindHost(serverProperties.getWebHost());
     }
     @Override
     public void unRegister(String token,String channelId){
@@ -126,7 +137,12 @@ public class DefaultServerHandlerService implements ServerHandlerService {
     public void forwardMesage(MessageDTO message,Long msgId){
         // 消息转发到其机器或是进程进行消息发送,这里的应该从全局registerHosts中获取其他hosts
         log.info("----------消息转发:{}:{}-----------",msgId,message);
-        List<String> hosts = registHostService.getRegistHostsWithoutLocal(message.getTo().getUserCode(),serverProperties.getWebHost());
+        List<String> hosts;
+        if (MessageType.USER_GROUP.getMsgType().equals(message.getMsgType())){
+            hosts = registHostService.getBindHosts();
+        }else {
+            hosts = registHostService.getRegistHostsWithoutLocal(message.getTo().getUserCode(),serverProperties.getWebHost());
+        }
 
         hosts.stream().forEach(host -> {
             String remoteUrl = Consts.HTTP_SCHEMA + host + Consts.FORWARD_METHOD;
@@ -153,13 +169,26 @@ public class DefaultServerHandlerService implements ServerHandlerService {
 
     @Override
     public String sendMessage(MessageDTO message,Long msgId){
-        String userCode = message.getTo().getUserCode();
+        if (MessageType.USER_GROUP.getMsgType().equals(message.getMsgType())){
+            // 群发
+            clientRegisters.keySet().stream().forEach(userCode -> sendMessage(userCode,message,null));
+
+            return Consts.RSP_OK;
+        }else {
+            String userCode = message.getTo().getUserCode();
+            return sendMessage(userCode,message,msgId);
+        }
+    }
+
+    private String sendMessage(String userCode,MessageDTO message,Long msgId){
         ClientChannel clientChannel = clientRegisters.get(userCode);
         if (clientChannel!=null && clientChannel.getChannel()!=null){
             clientChannel.getChannel().writeAndFlush(new TextWebSocketFrame(MessageJsonUtil.toJson(message)));
 
             // 标记消息已经发送
-            makeMessageHasSended(msgId);
+            if (msgId!=null){
+                makeMessageHasSended(msgId);
+            }
             return Consts.RSP_OK;
         }
         return Consts.RSP_IGNORE;
