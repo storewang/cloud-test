@@ -2,6 +2,7 @@ package com.ai.spring.boot.netty.ws.service;
 
 import com.ai.spring.boot.netty.ws.model.ClientChannel;
 import com.ai.spring.boot.netty.ws.model.DispatchMsgRequest;
+import com.ai.spring.boot.netty.ws.model.MessageDTO;
 import com.ai.spring.boot.netty.ws.model.UserDTO;
 
 import java.util.List;
@@ -14,6 +15,12 @@ import java.util.List;
  * @Version 1.0
  **/
 public interface ServerHandlerService {
+    /**
+     * 用户登录
+     * @param userId
+     * @return
+     */
+    String login(Long userId);
     /**
      * token验证
      * @param token
@@ -48,10 +55,22 @@ public interface ServerHandlerService {
     void register(ClientChannel clientChannel);
 
     /**
+     * 注销账户信息
+     * @param token
+     * @param channelId
+     */
+    void unRegister(String token,String channelId);
+    /**
      * 消息发送处理
      * @param request
      */
     void dispatcher(DispatchMsgRequest request);
+
+    /**
+     * 消息转发
+     * @param message
+     */
+    void forwardMesage(MessageDTO message,Long msgId);
 
     /**
      * 监控资源信息
@@ -64,4 +83,25 @@ public interface ServerHandlerService {
      * @return
      */
     ClientChannel getClientChannelByUcode(String userCode);
+
+    /**
+     * 添加消息记录
+     * @param message
+     * @return
+     */
+    Long saveMessage(MessageDTO message);
+
+    /**
+     * 设置消息已经发送
+     * @param msgId
+     */
+    void makeMessageHasSended(Long msgId);
+
+    /**
+     * 消息发送，只发本机的消息，不进行消息转发
+     * @param message
+     * @param msgId
+     * @return
+     */
+    String sendMessage(MessageDTO message,Long msgId);
 }

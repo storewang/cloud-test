@@ -122,4 +122,20 @@ public class TextWebSocketFrameHandler extends UserChannelHandler<TextWebSocketF
             super.userEventTriggered(ctx,evt);
         }
     }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        log.info("-----------channelInactive---------------");
+        super.channelInactive(ctx);
+    }
+
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+        Channel channel = ctx.channel();
+        String token = channel.attr(AttributeKey.<String>valueOf(Consts.CHANNEL_TOKEN_KEY)).get();
+        log.info("-----------{}:用户断开连接---------------",token);
+        serverHandlerService.unRegister(token,channel.id().toString());
+
+        super.channelUnregistered(ctx);
+    }
 }

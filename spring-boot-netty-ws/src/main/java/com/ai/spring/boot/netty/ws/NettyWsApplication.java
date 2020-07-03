@@ -14,6 +14,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 public class NettyWsApplication {
     public static void main(String[] args) {
         SpringApplicationBuilder builder = new SpringApplicationBuilder(NettyWsApplication.class);
-        builder.web(WebApplicationType.NONE).run(args);
+        builder.web(WebApplicationType.REACTIVE).run(args);
     }
 }

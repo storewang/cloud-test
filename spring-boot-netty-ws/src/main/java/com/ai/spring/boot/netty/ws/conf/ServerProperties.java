@@ -1,8 +1,10 @@
 package com.ai.spring.boot.netty.ws.conf;
 
+import com.ai.spring.boot.netty.ws.util.Consts;
 import com.ai.spring.boot.netty.ws.util.HostAddressUtil;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -19,6 +21,8 @@ public class ServerProperties {
     private static final String DEF_CONTEXT = "/ws";
     private String host;
     private Integer port;
+    @Value("${server.port:8080}")
+    private Integer webPort;
     @Autowired
     private ThreadProperties thread;
     private String contextPath;
@@ -47,6 +51,11 @@ public class ServerProperties {
             return DEF_CONTEXT;
         }
         return contextPath;
+    }
+
+    public String getWebHost(){
+        String host = getHost();
+        return host + Consts.STR_SPLIT + webPort;
     }
 
     public String getHost(){

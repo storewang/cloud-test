@@ -41,4 +41,17 @@ public final class StringUtil {
     public static boolean isEmpty(final CharSequence cs) {
         return cs == null || cs.length() == 0;
     }
+
+    /**
+     * 字符串转Long型
+     * @param str
+     * @return
+     */
+    public static Long str2Long(String str){
+        try {
+            return Long.parseLong(str);
+        }catch (Throwable e){
+            return null;
+        }
+    }
 }

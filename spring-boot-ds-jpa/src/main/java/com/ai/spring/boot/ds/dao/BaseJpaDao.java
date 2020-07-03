@@ -39,7 +39,7 @@ public class BaseJpaDao<M extends BaseJpaRepository<T>,T extends BaseEntity> imp
     protected M getRespository(){
         return baseRespository;
     }
-
+    @Override
     public T save(T entity){
         // 设置主键
         entity.setId(IdWorker.getId());
@@ -85,6 +85,7 @@ public class BaseJpaDao<M extends BaseJpaRepository<T>,T extends BaseEntity> imp
         }
         return result;
     }
+    @Override
     public T updateBySenstive(T entity){
         Optional<T> optional = baseRespository.findById(entity.getId());
         if (!optional.isPresent()){
@@ -96,7 +97,7 @@ public class BaseJpaDao<M extends BaseJpaRepository<T>,T extends BaseEntity> imp
 
         return baseRespository.save(data);
     }
-
+    @Override
     public T findById(Long id){
         Optional<T> optional = baseRespository.findById(id);
         if (!optional.isPresent()){
@@ -105,9 +106,11 @@ public class BaseJpaDao<M extends BaseJpaRepository<T>,T extends BaseEntity> imp
 
         return optional.get();
     }
+    @Override
     public List<T> findByIds(List<Long> ids){
         return baseRespository.findAllById(ids);
     }
+    @Override
     public boolean removeById(Long id){
         Optional<T> optional = baseRespository.findById(id);
         if (!optional.isPresent()){
@@ -121,6 +124,7 @@ public class BaseJpaDao<M extends BaseJpaRepository<T>,T extends BaseEntity> imp
 
         return result!=null && result.getStatus().equals(DataStatusEnum.INVALID.getCode());
     }
+    @Override
     public boolean removeByIds(List<Long> ids){
         List<T> datas = baseRespository.findAllById(ids);
 
@@ -131,18 +135,21 @@ public class BaseJpaDao<M extends BaseJpaRepository<T>,T extends BaseEntity> imp
 
         return true;
     }
+    @Override
     public List<T>  findBySenstive(T entity){
         ExampleMatcher exampleMatcher = ExampleMatcher.matching().withIgnoreNullValues();
         Example<T> example = Example.of(entity,exampleMatcher);
         return baseRespository.findAll(example);
     }
+    @Override
     public List<T> findAll() {
         return baseRespository.findAll();
     }
+    @Override
     public List<T> queryByCriteria(IQueryCriteria queryCriteria, T entity){
         return baseRespository.findAll(SpecificationBuilder.of(entity).build(queryCriteria));
     }
-
+    @Override
     public Page<T> queryByCriteria(IQueryCriteria queryCriteria,T entity,Page<?> page){
         PageRequest pageRequest = PageRequest.of(page.getCurrentPage(),page.getPageSize());
         org.springframework.data.domain.Page<T> result = baseRespository.findAll(SpecificationBuilder.of(entity).build(queryCriteria),pageRequest);

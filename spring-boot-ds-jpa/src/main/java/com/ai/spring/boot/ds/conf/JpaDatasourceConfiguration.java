@@ -24,9 +24,6 @@ import javax.sql.DataSource;
 @Configuration
 @ConditionalOnClass(value = {HikariDataSource.class})
 @EnableConfigurationProperties(value = {DataSourceProperties.class})
-/**这两个配置需要引用项目中进行配置*/
-//@EnableJpaRepositories(basePackages = {"com.ai.spring.boot.gateway.dao.repository.route"})
-//@EntityScan(basePackages = {"com.ai.spring.boot.gateway.dao.bean"})
 @ComponentScan(basePackages = "com.ai.spring.boot.ds.jpa")
 public class JpaDatasourceConfiguration {
     @Bean(name = "dataSource")

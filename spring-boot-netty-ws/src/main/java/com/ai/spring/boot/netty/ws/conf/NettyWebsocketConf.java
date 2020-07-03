@@ -1,12 +1,13 @@
 package com.ai.spring.boot.netty.ws.conf;
 
 import com.ai.spring.boot.netty.ws.server.NettyWebsocketServer;
-import com.ai.spring.boot.netty.ws.service.DefaultServerHandlerService;
+import com.ai.spring.boot.netty.ws.service.impl.DefaultServerHandlerService;
 import com.ai.spring.boot.netty.ws.service.ServerHandlerService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * websocket conf
@@ -28,5 +29,10 @@ public class NettyWebsocketConf {
     @ConditionalOnMissingBean(NettyWebsocketServer.class)
     public NettyWebsocketServer websocketServer(ServerHandlerService serverHandlerService,ServerProperties serverProperties){
         return new NettyWebsocketServer(serverProperties,serverHandlerService);
+    }
+
+    @Bean
+    public WebClient webClient(){
+        return WebClient.builder().build();
     }
 }

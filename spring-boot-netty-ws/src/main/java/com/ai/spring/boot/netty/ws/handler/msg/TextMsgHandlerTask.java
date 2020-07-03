@@ -36,15 +36,20 @@ public class TextMsgHandlerTask implements BusinessThreadTask {
 
     @Override
     public void run() {
+        // 记录消息
+        Long msgId = serverHandlerService.saveMessage(message);
+
         ClientChannel clientChannel = serverHandlerService.getClientChannelByUcode(toUser.getUserCode());
         // 与本机进行连接
         if (clientChannel!=null){
             Channel channel = clientChannel.getChannel();
 
             channel.writeAndFlush(new TextWebSocketFrame(MessageJsonUtil.toJson(message)));
+            // 设置消息已经发送
+            serverHandlerService.makeMessageHasSended(msgId);
         }else {
             // 连接不在本机，需要消息进行转发
-
+            serverHandlerService.forwardMesage(message,msgId);
         }
     }
 }

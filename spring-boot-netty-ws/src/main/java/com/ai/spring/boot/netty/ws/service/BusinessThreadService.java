@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -39,6 +40,8 @@ public class BusinessThreadService {
         log.info("-------thread.pool.queue.size={}---------",threadPoolExecutor.getQueue().size());
         log.info("-------thread.pool.active.size={}---------",threadPoolExecutor.getActiveCount());
     }
+
+    @PreDestroy
     public void destroy(){
         threadPoolExecutor.shutdown();
     }
