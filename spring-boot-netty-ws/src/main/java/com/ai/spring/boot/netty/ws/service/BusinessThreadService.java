@@ -5,12 +5,12 @@ import com.ai.spring.boot.netty.ws.thread.BusinessThreadPoolExcutor;
 import com.ai.spring.boot.netty.ws.thread.BusinessThreadTask;
 import com.ai.spring.boot.netty.ws.thread.ThreadDiscardPolicy;
 import com.ai.spring.boot.netty.ws.util.Consts;
-import com.ai.spring.boot.netty.ws.util.WebClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
@@ -54,14 +54,19 @@ public class BusinessThreadService {
         hosts.stream().forEach(host -> {
             String remoteUrl = Consts.HTTP_SCHEMA + host + Consts.HOME_METHOD;
 
-            Mono<String> bodyToMono = webClient.get().uri(remoteUrl).retrieve().bodyToMono(String.class);
-            bodyToMono.doOnError(WebClientResponseException.class, err -> {
-                log.warn("---------remoteUrl:{}不过达...------------",remoteUrl);
+            Mono<ClientResponse> responseMono = webClient.get()
+                    .uri(remoteUrl).exchange();
+            try{
+                HttpStatus httpStatus = responseMono.block().statusCode();
+                log.warn("---------remoteUrl:{} responseStatus:{}------------",remoteUrl,httpStatus);
+                if (httpStatus != HttpStatus.OK){
+                    registHostService.unBindHost(host);
+                }
+            }catch (Exception e){
+                log.warn("---------remoteUrl:{} res.error:{}------------",remoteUrl,e.getMessage());
                 registHostService.unBindHost(host);
-            });
-            bodyToMono.subscribe(result -> {
-                log.warn("---------result:{}------------",result);
-            });
+            }
+
         });
     }
 
