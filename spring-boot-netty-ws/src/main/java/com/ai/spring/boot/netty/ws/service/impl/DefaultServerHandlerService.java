@@ -75,7 +75,7 @@ public class DefaultServerHandlerService implements ServerHandlerService {
 
         return Optional.ofNullable(userId).map(id -> users.keySet().contains(id)).orElse(Boolean.FALSE);
     }
-
+    @Override
     public String getHashLoginedToken(String userId){
         return userTokens.get(userId);
     }
