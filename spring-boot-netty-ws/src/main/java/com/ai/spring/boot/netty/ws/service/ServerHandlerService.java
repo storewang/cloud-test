@@ -29,6 +29,12 @@ public interface ServerHandlerService {
     Boolean checkToken(String token);
 
     /**
+     * 判断同一用户是否在同一机器上存在连接。
+     * @param userId
+     * @return
+     */
+    String getHashLoginedToken(String userId);
+    /**
      * 根据登录token获取用户信息
      * @param token
      * @return

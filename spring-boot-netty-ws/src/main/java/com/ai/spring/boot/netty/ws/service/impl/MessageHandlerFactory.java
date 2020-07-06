@@ -28,7 +28,6 @@ public class MessageHandlerFactory implements MessageHandler,ApplicationContextA
 
         switch (msgType){
             case USER_ERROR:
-            case ACCESS_DENIED:
             case MSG_JSON_ERROR:
                 messageHandler = context.getBean(DEF_HANDER_NAME,MessageHandler.class);
                 break;

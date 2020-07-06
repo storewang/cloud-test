@@ -28,6 +28,8 @@ public enum MessageType {
 
     /**聊天消息*/
     MSG_CONTENT(6),
+    /**离线聊天消息*/
+    MSG_OFFLINE_CONTENT(7),
 
     /**心跳消息*/
     HEART_BEAT(8),

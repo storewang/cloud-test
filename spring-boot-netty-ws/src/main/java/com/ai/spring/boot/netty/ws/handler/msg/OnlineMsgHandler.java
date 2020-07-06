@@ -11,6 +11,8 @@ import com.ai.spring.boot.netty.ws.service.ServerHandlerService;
 import com.ai.spring.boot.netty.ws.util.MessageJsonUtil;
 import com.ai.spring.boot.netty.ws.util.MessageType;
 import com.ai.spring.boot.netty.ws.util.MessageUtil;
+import com.ai.spring.boot.netty.ws.util.UserCodeUtil;
+import com.ai.spring.im.common.util.StringUtil;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +43,14 @@ public class OnlineMsgHandler implements MessageHandler {
         threadService.execute(new TextMsgHandlerTask(UserDTO.builder().build(),message,serverHandlerService));
 
         // 摘取发送给自己的离线消息，进行推送
-        List<MessageRecord> notSendedMessage = messageRecordDao.getNotSendedMessage(message.getFrom().getUserCode());
+        String receive = UserCodeUtil.getUserIdByCode(message.getFrom().getUserCode());
+        if (StringUtil.isEmpty(receive)){
+            return;
+        }
+        List<MessageRecord> notSendedMessage = messageRecordDao.getNotSendedMessage(receive);
         notSendedMessage.stream().forEach(messageRecord -> {
             MessageDTO messageDTO = MessageUtil.messageRecord2MessageDTO(messageRecord);
-            messageDTO.setMsgType(MessageType.MSG_CONTENT.getMsgType());
+            messageDTO.setMsgType(MessageType.MSG_OFFLINE_CONTENT.getMsgType());
 
             Channel channel = request.getChannel().getChannel();
             channel.writeAndFlush(new TextWebSocketFrame(MessageJsonUtil.toJson(message)));

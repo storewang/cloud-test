@@ -51,7 +51,8 @@ public class BusinessThreadService {
         log.info("-------thread.pool.active.size={}---------",threadPoolExecutor.getActiveCount());
 
         List<String> hosts = registHostService.getBindHosts();
-        hosts.stream().forEach(host -> {
+        String webHost = serverProperties.getWebHost();
+        hosts.stream().filter(host -> !host.equals(webHost)).forEach(host -> {
             String remoteUrl = Consts.HTTP_SCHEMA + host + Consts.HOME_METHOD;
 
             Mono<ClientResponse> responseMono = webClient.get()

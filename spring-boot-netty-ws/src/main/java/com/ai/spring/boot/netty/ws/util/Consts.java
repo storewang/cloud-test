@@ -20,6 +20,7 @@ public final class Consts {
     public static final String URL_SPLIT         = "?";
     public static final String URL_TOKEN_KEY     = "token";
     public static final String CHANNEL_TOKEN_KEY = "netty.channel.token";
+    public static final String ACCESS_DENIED_KEY = "netty.channel.access.denied";
     public static final String MSG_PREFIX        = "MSG-";
 
     /**消息未发送*/

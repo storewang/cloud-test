@@ -10,6 +10,7 @@ import com.ai.spring.boot.netty.ws.util.Consts;
 import com.ai.spring.boot.netty.ws.util.MessageJsonUtil;
 import com.ai.spring.boot.netty.ws.util.MessageType;
 import com.ai.spring.boot.netty.ws.util.UserCodeUtil;
+import com.ai.spring.im.common.util.StringUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -44,6 +45,7 @@ public class TextWebSocketFrameHandler extends UserChannelHandler<TextWebSocketF
 
         ClientChannel.ClientChannelBuilder builder = ClientChannel.builder();
         builder.channel(channel)
+                .ctx(ctx)
                 .channelId(channel.id().toString())
                 .host(serverProperties.getHost())
                 .port(serverProperties.getPort());
@@ -96,6 +98,7 @@ public class TextWebSocketFrameHandler extends UserChannelHandler<TextWebSocketF
             DispatchMsgRequest request = null;
             ClientChannel.ClientChannelBuilder builder = ClientChannel.builder();
             builder.channel(channel)
+                    .ctx(ctx)
                     .channelId(channel.id().toString())
                     .host(serverProperties.getHost())
                     .port(serverProperties.getPort());
@@ -107,15 +110,23 @@ public class TextWebSocketFrameHandler extends UserChannelHandler<TextWebSocketF
             }else {
                 // 权限验证通过，获取用户信息
                 UserDTO user = serverHandlerService.getUserByToken(token);
-                user.setUserCode(UserCodeUtil.getUserCode(token,channel.id().toString(),user));
-                // 1. 注册客户连接信息
-                builder.token(token).user(user);
-                ClientChannel clientChannel = builder.build();
-                serverHandlerService.register(clientChannel);
-                // 2. 发送客户连接上线通知信息
-                message = new MessageDTO(user,String.format("%s已上线",user.getUserName()),MessageType.USER_ONLINE.getMsgType());
 
-                request = DispatchMsgRequest.builder().message(message).channel(clientChannel).token(token).build();
+                // 判断用户是否已经在本机器上进行连接
+                String hashLoginedToken = serverHandlerService.getHashLoginedToken(UserCodeUtil.getUserIdByToken(token).toString());
+                if (!StringUtil.isEmpty(hashLoginedToken)){
+                    message = new MessageDTO(null,"用户已经建立连接了，不需要重复连接。", MessageType.ACCESS_DENIED.getMsgType());
+                    request = DispatchMsgRequest.builder().channel(builder.build()).message(message).build();
+                }else {
+                    user.setUserCode(UserCodeUtil.getUserCode(token,channel.id().toString(),user));
+                    // 1. 注册客户连接信息
+                    builder.token(token).user(user);
+                    ClientChannel clientChannel = builder.build();
+                    serverHandlerService.register(clientChannel);
+                    // 2. 发送客户连接上线通知信息
+                    message = new MessageDTO(user,String.format("%s已上线",user.getUserName()),MessageType.USER_ONLINE.getMsgType());
+
+                    request = DispatchMsgRequest.builder().message(message).channel(clientChannel).token(token).build();
+                }
             }
             serverHandlerService.dispatcher(request);
         }else {
@@ -134,6 +145,11 @@ public class TextWebSocketFrameHandler extends UserChannelHandler<TextWebSocketF
         Channel channel = ctx.channel();
         String token = channel.attr(AttributeKey.<String>valueOf(Consts.CHANNEL_TOKEN_KEY)).get();
         log.info("-----------{}:用户断开连接---------------",token);
+        String deniedVal = channel.attr(AttributeKey.<String>valueOf(Consts.ACCESS_DENIED_KEY)).get();
+        if (Consts.RSP_OK.equals(deniedVal)){
+            super.channelUnregistered(ctx);
+            return;
+        }
         serverHandlerService.unRegister(token,channel.id().toString());
 
         // 下线通知
@@ -141,6 +157,7 @@ public class TextWebSocketFrameHandler extends UserChannelHandler<TextWebSocketF
         DispatchMsgRequest request = null;
         ClientChannel.ClientChannelBuilder builder = ClientChannel.builder();
         builder.channel(channel)
+                .ctx(ctx)
                 .channelId(channel.id().toString())
                 .host(serverProperties.getHost())
                 .port(serverProperties.getPort());

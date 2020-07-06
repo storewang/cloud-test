@@ -16,6 +16,7 @@ import com.ai.spring.boot.netty.ws.util.MessageJsonUtil;
 import com.ai.spring.boot.netty.ws.util.MessageType;
 import com.ai.spring.boot.netty.ws.util.UserCodeUtil;
 import com.ai.spring.boot.netty.ws.util.WebClientUtil;
+import com.ai.spring.im.common.util.StringUtil;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 public class DefaultServerHandlerService implements ServerHandlerService {
     private static final Map<Long,UserDTO> users = new HashMap<>(16);
     private static final ConcurrentHashMap<String,ClientChannel> clientRegisters = new ConcurrentHashMap<>(16);
+    private static final ConcurrentHashMap<String,String> userTokens = new ConcurrentHashMap<>(16);
     static {
         users.put(1L,UserDTO.builder().userId(1L).userName("用户01").build());
         users.put(2L,UserDTO.builder().userId(2L).userName("用户02").build());
@@ -74,6 +76,10 @@ public class DefaultServerHandlerService implements ServerHandlerService {
         return Optional.ofNullable(userId).map(id -> users.keySet().contains(id)).orElse(Boolean.FALSE);
     }
 
+    public String getHashLoginedToken(String userId){
+        return userTokens.get(userId);
+    }
+
     @Override
     public UserDTO getUserByToken(String token) {
         Long userId = UserCodeUtil.getUserIdByToken(token);
@@ -98,6 +104,7 @@ public class DefaultServerHandlerService implements ServerHandlerService {
     public void register(ClientChannel clientChannel) {
         String userCode = clientChannel.getUser().getUserCode();
         clientRegisters.putIfAbsent(userCode,clientChannel);
+        userTokens.putIfAbsent(clientChannel.getUser().getUserId().toString(),clientChannel.getToken());
 
         registHostService.registWsHost(userCode,serverProperties.getWebHost());
     }
@@ -114,6 +121,8 @@ public class DefaultServerHandlerService implements ServerHandlerService {
         String userCode = UserCodeUtil.getUserCode(token,channelId);
 
         clientRegisters.remove(userCode);
+        userTokens.remove(UserCodeUtil.getUserIdByToken(token).toString());
+
         registHostService.unRegistHost(userCode,serverProperties.getWebHost());
     }
 
@@ -153,10 +162,16 @@ public class DefaultServerHandlerService implements ServerHandlerService {
     @Override
     public Long saveMessage(MessageDTO message){
         log.info("----------添加消息:{}-----------",message);
+        String sender   = UserCodeUtil.getUserIdByCode(message.getFrom().getUserCode());
+        String receiver = UserCodeUtil.getUserIdByCode(message.getTo().getUserCode());
+        if (StringUtil.isEmpty(sender) || StringUtil.isEmpty(receiver)){
+            log.warn("消息接收者或是发送者为空，忽略不进行持久化。");
+            return null;
+        }
         MessageRecord record = new MessageRecord();
         record.setMsg(message.getContent());
-        record.setSender(message.getFrom().getUserCode());
-        record.setReceiver(message.getTo().getUserCode());
+        record.setSender(sender);
+        record.setReceiver(receiver);
 
         return messageRecordDao.saveMessage(record);
     }

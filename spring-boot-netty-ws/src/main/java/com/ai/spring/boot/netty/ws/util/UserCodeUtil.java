@@ -24,7 +24,19 @@ public final class UserCodeUtil {
 
         return EncryptUtils.encrypt(utoken,EncryptUtils.DEF_PWD,EncryptUtils.SALT);
     }
-
+    public static String getUserIdByCode(String userCode){
+        String utoken = EncryptUtils.decrypt(userCode,EncryptUtils.DEF_PWD,EncryptUtils.SALT);
+        return Optional.ofNullable(utoken).flatMap(code -> {
+            String result = null;
+            if (code.indexOf(Consts.STR_SPLIT)>-1){
+                String[] split = code.split(Consts.STR_SPLIT);
+                if (split.length > 2){
+                    result = split[1];
+                }
+            }
+            return Optional.ofNullable(result);
+        }).orElse(null);
+    }
     public static String getTokenByUserCode(String userCode){
         String utoken = EncryptUtils.decrypt(userCode,EncryptUtils.DEF_PWD,EncryptUtils.SALT);
 

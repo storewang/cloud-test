@@ -7,6 +7,9 @@ import com.ai.spring.boot.netty.ws.model.UserDTO;
 import com.ai.spring.boot.netty.ws.service.IMessageRecordService;
 import com.ai.spring.boot.netty.ws.util.MessageType;
 import com.ai.spring.boot.netty.ws.util.MessageUtil;
+import com.ai.spring.boot.netty.ws.util.UserCodeUtil;
+import com.ai.spring.im.common.util.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +26,18 @@ import java.util.stream.Collectors;
  * @Version 1.0
  **/
 @Service
+@Slf4j
 public class MessageRecordServiceImpl implements IMessageRecordService {
     @Autowired
     private IMessageRecordDao messageRecordDao;
     @Override
     public List<MessageDTO> getNewListMessage(String sender,Long minMsgId){
-        List<MessageRecord> recordList = messageRecordDao.getNewListMessage(sender, minMsgId);
+        String receive = UserCodeUtil.getUserIdByCode(sender);
+        if (StringUtil.isEmpty(receive)){
+            log.warn("消息接收者ID不能为空:{}",sender);
+            return Collections.EMPTY_LIST;
+        }
+        List<MessageRecord> recordList = messageRecordDao.getNewListMessage(receive, minMsgId);
 
         return Optional.ofNullable(recordList).flatMap(records -> {
             List<MessageDTO> messageDTOS = records

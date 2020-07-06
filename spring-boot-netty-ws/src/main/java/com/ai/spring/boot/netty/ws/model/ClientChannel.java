@@ -1,6 +1,7 @@
 package com.ai.spring.boot.netty.ws.model;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,4 +25,5 @@ public class ClientChannel {
     private UserDTO user;
     private String channelId;
     private Channel channel;
+    private ChannelHandlerContext ctx;
 }
