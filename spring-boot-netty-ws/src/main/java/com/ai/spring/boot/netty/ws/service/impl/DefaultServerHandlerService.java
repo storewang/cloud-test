@@ -90,7 +90,8 @@ public class DefaultServerHandlerService implements ServerHandlerService {
     public UserDTO getUserByCode(String code) {
         String token    = UserCodeUtil.getTokenByUserCode(code);
         UserDTO userDTO = getUserByToken(token);
-        userDTO.setUserCode(code);
+        Optional.ofNullable(userDTO).ifPresent(u -> u.setUserCode(code));
+        /**userDTO.setUserCode(code);**/
         return userDTO;
     }
 
@@ -138,7 +139,7 @@ public class DefaultServerHandlerService implements ServerHandlerService {
 
     @Override
     public void monitorResources() {
-        log.info("-----{}:{}---online users:------------",serverProperties.getHost(),serverProperties.getPort(),clientRegisters.size());
+        log.info("-----{}:{}---online users: {}------------",serverProperties.getHost(),serverProperties.getPort(),clientRegisters.size());
         businessThreadService.logInfos();
     }
 
