@@ -29,3 +29,12 @@
 - 当前连接的机器上的记录清除对应的ip:port:uid记录,
 - 当前机器上的连接数减1
 
+5. 需要扩展websocket自动注册到注册中心
+- nacos注册中心实现
+- 要不能使用gateway进行转时没法配置到ws上的端口。
+
+6. nacos注册中心扩展参考
+- NacosAutoServiceRegistration 主要继承了AbstractAutoServiceRegistration
+- spring cloud的自动注册功能主要是在监听WebServerInitializedEvent事件后开始进行注册的
+- AbstractAutoServiceRegistration => onApplicationEvent => bind() => start() => register() => serviceRegistry.register(registration)
+- nacos扩展的自动注册主要是三个类,NacosServiceRegistry,NacosRegistration,NacosAutoServiceRegistration
