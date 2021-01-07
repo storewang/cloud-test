@@ -1,7 +1,9 @@
 spring:
+  application:
+    name: spring-boot-netty-ws
   boot:
     ws:
-      #host: 192.168.20.13
+      #host: 192.168.40.70
       port: 10081
       contextPath: /ws
       thread:
@@ -9,6 +11,17 @@ spring:
         workerThreadNum: 4
         monitorPeriodSec: 120
         heartBeatTimeSec: 600
+  cloud:
+    nacos:
+      discovery:
+        # 指定nacos server地址
+        server-addr: nacos:8080
+        metadata:
+          version: 2.0
+        # 指定namespace 跨namespace服务不能调用
+        #namespace: 151ce241-f6f0-4862-9175-60b82c9d5b34
+        # 指定集群名称
+        cluster-name: NJ
   redis:
     host: 192.168.60.103
     port: 6379
@@ -25,5 +38,17 @@ spring:
     username: tptest
     password: abc123
     url: jdbc:mysql://mysqlServer:3306/docker_test?characterEncoding=UTF-8&useUnicode=true&useSSL=false
-server:
-  port: 8080
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include:
+        - health
+        - info
+        - metrics
+info:
+  app-name: spring-boot-netty-ws
+  author: 石头
