@@ -11,8 +11,5 @@ spring:
   profiles:
     active: dev
 
-NACOS:
-  CONNECT:
-    TIMEOUT: 3000
 server:
   port: 8080
