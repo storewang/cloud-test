@@ -5,10 +5,14 @@ spring:
         # 配置管理服务器地址
         server-addr: nacos:8080
         file-extension: yaml
+        timeout: 30000
   application:
     name: spring-boot-netty-ws
   profiles:
     active: dev
 
+NACOS:
+  CONNECT:
+    TIMEOUT: 3000
 server:
   port: 8080

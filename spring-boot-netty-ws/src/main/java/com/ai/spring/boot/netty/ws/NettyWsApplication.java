@@ -1,9 +1,11 @@
 package com.ai.spring.boot.netty.ws;
 
 import com.ai.spring.boot.ds.annotation.EnableJpaDataSource;
+import com.alibaba.cloud.nacos.NacosDiscoveryAutoConfiguration;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration;
 
 /**
  * 启动类
@@ -11,7 +13,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
  * @Date 2020/6/28
  * @Version 1.0
  **/
-@SpringBootApplication
+@SpringBootApplication(exclude = {AutoServiceRegistrationAutoConfiguration.class,NacosDiscoveryAutoConfiguration.class})
 @EnableJpaDataSource(basePackages = "com.ai.spring.boot.netty.ws.dao.repository",entityBasePackages = "com.ai.spring.boot.netty.ws.dao.bean")
 public class NettyWsApplication {
     public static void main(String[] args) {
