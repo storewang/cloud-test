@@ -2,6 +2,7 @@ package com.ai.spring.boot.im.conf;
 
 import com.ai.spring.boot.im.ws.MessageHandler;
 import com.ai.spring.boot.im.ws.MessageHandshakeInterceptor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
@@ -17,6 +18,7 @@ import javax.annotation.Resource;
  * @Version 1.0
  **/
 @Configuration
+@EnableConfigurationProperties(WxConf.class)
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
     @Resource

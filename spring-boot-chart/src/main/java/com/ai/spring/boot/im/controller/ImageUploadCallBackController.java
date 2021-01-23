@@ -1,10 +1,16 @@
 package com.ai.spring.boot.im.controller;
 
+import com.ai.spring.boot.im.conf.WxConf;
 import com.ai.spring.boot.im.dto.NotifyHouseInfo;
 import com.ai.spring.boot.im.dto.NotifyInfoData;
 import com.ai.spring.boot.im.dto.PingNotifyInfoData;
 import com.ai.spring.boot.im.dto.ShellHouseDTO;
 import com.ai.spring.boot.im.dto.ShellImageDTO;
+import com.ai.spring.boot.im.dto.wxchart.AccessTokenDTO;
+import com.ai.spring.boot.im.dto.wxchart.CheckSignatureDTO;
+import com.ai.spring.boot.im.dto.wxchart.UserInfoDTO;
+import com.ai.spring.boot.im.dto.wxchart.WxEventDTO;
+import com.ai.spring.boot.im.util.WxApiConst;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
@@ -35,6 +41,8 @@ import java.net.URLDecoder;
 public class ImageUploadCallBackController {
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private WxConf wxConf;
     @PostMapping("/callBack/{landLord}")
     public void imageCallBack(@PathVariable("landLord") String landlord, @RequestBody ShellImageDTO imageDTO){
         log.info("---{} call back image : {}--",landlord,imageDTO);
@@ -69,9 +77,29 @@ public class ImageUploadCallBackController {
     }
 
     @GetMapping("/")
-    public String home(){
-        log.info("---welcome to spring boot home.--");
-        return "hello world!";
+    public String home(CheckSignatureDTO checkSignature){
+        log.info("---welcome to spring boot home.:{}--",checkSignature);
+        return checkSignature.getEchostr();
+    }
+    @PostMapping("/")
+    public String wxEventListener(@RequestBody String wxEvent){
+        log.info("---接收到公众号的事件推送.:{}--",wxEvent);
+        return "OK";
+    }
+    @GetMapping("/user")
+    public UserInfoDTO getWxUserInfo(String accessToken,String openId){
+        String userUrl = String.format(WxApiConst.userInfoUrl,accessToken,openId);
+
+        UserInfoDTO userInfoDTO = restTemplate.getForObject(userUrl, UserInfoDTO.class);
+        return userInfoDTO;
+    }
+    @GetMapping("/accessToken")
+    public AccessTokenDTO getAccessToken(){
+        String tokenUrl = String.format(WxApiConst.accessTokenUrl,wxConf.getAppId(),wxConf.getAppsecret());
+
+        AccessTokenDTO accessTokenDTO = restTemplate.getForObject(tokenUrl, AccessTokenDTO.class);
+
+        return accessTokenDTO;
     }
 
     private NotifyInfoData getNotifyCallBackInfo(String sign,String callbackStr){
